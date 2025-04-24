@@ -405,12 +405,4 @@ Node* mergeSortBySeverity(Node* head) {
     return mergeSortedBySeverity(left, right);
 }
 
-/////////////////////////////////////////////////////////////////////////////
-int main(){
 
-
-
-
-
-    return 0;
-}
