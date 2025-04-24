@@ -71,4 +71,3 @@ gentle=tender#harsh
 clean=spotless#dirty  
 quiet=silent#noisy  
 palindrome=same#same
-abdou=rayes#3amek
