@@ -1,19 +1,11 @@
-#include "trees.h"
+#include "tree_utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
-#include <stdbool.h>
+#include <math.h>
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helper functions and implementations
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-int helperQueueLen(TreeQNode *q) {
-    if (q == NULL) return 0;
-    return 1 + helperQueueLen(q->next);
-}
-
+// WordNode operations
 WordNode *copyNodeList(WordNode *src) {
     WordNode *dst = NULL;
     while (src != NULL) {
@@ -49,7 +41,17 @@ void insertAtEnd(WordNode **head, const char *newWord) {
     temp->next = newNode;
 }
 
-TTree2* createTreeNode2(const char *word, WordNode *synonyms, WordNode *antonyms) {
+int countWordNodes(WordNode *head) {
+    int count = 0;
+    while (head) {
+        count++;
+        head = head->next;
+    }
+    return count;
+}
+
+// Tree node operations
+TTree2 *createTreeNode2(const char *word, WordNode *synonyms, WordNode *antonyms) {
     TTree2 *newNode = (TTree2*)malloc(sizeof(TTree2));
     if (!newNode) return NULL;
 
@@ -71,7 +73,7 @@ TTree2* createTreeNode2(const char *word, WordNode *synonyms, WordNode *antonyms
     return newNode;
 }
 
-TTree2* insertBST2(TTree2 *root, const char *word, WordNode *synonyms, WordNode *antonyms) {
+TTree2 *insertBST2(TTree2 *root, const char *word, WordNode *synonyms, WordNode *antonyms) {
     if (root == NULL) return createTreeNode2(word, synonyms, antonyms);
 
     int cmp = strcmp(word, root->word);
@@ -79,17 +81,9 @@ TTree2* insertBST2(TTree2 *root, const char *word, WordNode *synonyms, WordNode 
         root->left = insertBST2(root->left, word, synonyms, antonyms);
     else if (cmp > 0)
         root->right = insertBST2(root->right, word, synonyms, antonyms);
+    // If word already exists, we don't modify it
 
     return root;
-}
-
-int countVowels(char *word) {
-    int count = 0;
-    for (int i = 0; i < strlen(word); i++) {
-        char c = tolower(word[i]);
-        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')  count++;
-    }
-    return count;
 }
 
 TTree2 *findMinNode2(TTree2 *node) {
@@ -98,33 +92,21 @@ TTree2 *findMinNode2(TTree2 *node) {
     return node;
 }
 
-int countWordNodes(WordNode *head) {
-    int count = 0;
-    while (head) {
-        count++;
-        head = head->next;
-    }
-    return count;
-}
-
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Stack operations
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-TStack2* createTreeStack() {
-    TStack2 *stack = (TStack2*)malloc(sizeof(TStack2));
+// Stack operations for trees
+TStack2Tree *createStack2() {
+    TStack2Tree *stack = (TStack2Tree*)malloc(sizeof(TStack2Tree));
     stack->top = NULL;
     return stack;
 }
 
-void pushTree(TStack2 *stack, TTree2 *node) {
+void push2(TStack2Tree *stack, TTree2 *node) {
     TStackNode2 *newNode = (TStackNode2*)malloc(sizeof(TStackNode2));
     newNode->treeNode = node;
     newNode->next = stack->top;
     stack->top = newNode;
 }
 
-TTree2* popTree(TStack2 *stack) {  
+TTree2 *pop2(TStack2Tree *stack) {  
     if (stack->top == NULL) return NULL;
     TStackNode2 *temp = stack->top;
     TTree2 *node = temp->treeNode;
@@ -133,23 +115,20 @@ TTree2* popTree(TStack2 *stack) {
     return node;
 }
 
-bool isTreeStackEmpty(TStack2 *stack) {
-    return (stack->top == NULL) ? true : false;
+bool isStack2Empty(TStack2Tree *stack) {
+    return (stack->top == NULL);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Queue operations
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-TreeQueue *createTreeQueue() {
-    TreeQueue *q = (TreeQueue*)malloc(sizeof(TreeQueue));
+// Queue operations for trees - RENAMED to avoid conflicts
+TQueue *tree_createQueue() {
+    TQueue *q = (TQueue*)malloc(sizeof(TQueue));
     q->front = NULL; 
     q->rear = NULL;
     return q;
 }
 
-void enqueueTree(TreeQueue *q, TTree2 *node) {
-    TreeQNode *newnode = (TreeQNode*)malloc(sizeof(TreeQNode));
+void tree_enqueue(TQueue *q, TTree2 *node) {
+    QNode *newnode = (QNode*)malloc(sizeof(QNode));
     newnode->treeNode = node;
     newnode->next = NULL;
     if (q->front == NULL && q->rear == NULL) {
@@ -161,10 +140,10 @@ void enqueueTree(TreeQueue *q, TTree2 *node) {
     }
 }
 
-TTree2 *dequeueTree(TreeQueue *q) {
+TTree2 *dequeue(TQueue *q) {
     if (q->front == NULL) return NULL; 
     
-    TreeQNode *temp = q->front;
+    QNode *temp = q->front;
     TTree2 *node = temp->treeNode;
     q->front = q->front->next;
     
@@ -176,44 +155,43 @@ TTree2 *dequeueTree(TreeQueue *q) {
     return node;
 }
 
-bool isTreeQueueEmpty(TreeQueue *q) {
+bool isEmptyQueue(TQueue *q) {
     return q->front == NULL;
 }
 
-int lenTreeQueue(TreeQueue *q) {
-    if (q == NULL || q->front == NULL) return 0;  
-    return helperQueueLen(q->front);
+int helper(QNode *q) {
+    if (q == NULL) return 0;
+    return 1 + helper(q->next);  
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Helper functions for BST operations
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+int lenQueue(TQueue *q) {
+    if (q == NULL || q->front == NULL) return 0;  
+    return helper(q->front);
+}
 
-void StoreBSTinOrderHelper(TTree2 *tr, TreeQueue **q) {
+// Helper functions
+void StoreBSTinOrderHelper(TTree2 *tr, TQueue **q) {
     if (tr != NULL) { 
         StoreBSTinOrderHelper(tr->left, q);
-        enqueueTree(*q, tr);
+        tree_enqueue(*q, tr);
         StoreBSTinOrderHelper(tr->right, q);
     }
-    return;
 }
 
-void StoreBSTpreOrderHelper(TTree2 *tr, TreeQueue **q) {
+void StoreBSTpreOrderHelper(TTree2 *tr, TQueue **q) {
     if (tr != NULL) { 
-        enqueueTree(*q, tr);
+        tree_enqueue(*q, tr);
         StoreBSTpreOrderHelper(tr->left, q);
         StoreBSTpreOrderHelper(tr->right, q);
     }
-    return;
 }
 
-void StoreBSTpostOrderHelper(TTree2 *tr, TreeQueue **q) {
+void StoreBSTpostOrderHelper(TTree2 *tr, TQueue **q) {
     if (tr != NULL) { 
         StoreBSTpostOrderHelper(tr->left, q);
         StoreBSTpostOrderHelper(tr->right, q);
-        enqueueTree(*q, tr);
+        tree_enqueue(*q, tr);
     }
-    return;
 }
 
 int HighBSTHelper(TTree2 *tr) {
@@ -230,21 +208,28 @@ void SizeBSTHelper(TTree2 *tr, int *counter) {
     SizeBSTHelper(tr->right, counter);
 }
 
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// Tree operations and functions
-//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// Tree operations
+TTree2 *toTree(TStack2Tree *stk) {
+    if (isStack2Empty(stk)) return NULL;
 
-TTree2 *toTree2(TStack2 *stk) {
-    if (isTreeStackEmpty(stk)) return NULL;
+    TTree2 *root = pop2(stk);
 
-    TTree2 *root = popTree(stk);
-
-    while (!isTreeStackEmpty(stk)) {
-        TTree2 *nextN = popTree(stk);
+    while (!isStack2Empty(stk)) {
+        TTree2 *nextN = pop2(stk);
         root = insertBST2(root, nextN->word, nextN->synonym, nextN->antonym);
     }
     
     return root;
+}
+
+// RENAMED to avoid conflicts
+int tree_countVowels(char *word) {
+    int count = 0;
+    for (int i = 0; i < strlen(word); i++) {
+        char c = tolower(word[i]);
+        if (c == 'a' || c == 'e' || c == 'i' || c == 'o' || c == 'u')  count++;
+    }
+    return count;
 }
 
 TTree2 *fillTree(const char *filename) {
@@ -266,7 +251,7 @@ TTree2 *fillTree(const char *filename) {
         
         char *hashpos = strchr(line, '#');
         if (!hashpos) {
-            printf("\033[0;31mLine %d does not contain '#' delimiter: %s\033[0m\n", lineCount, line);
+            printf("\033[0;34mLine %d does not contain '#' delimiter: %s\033[0m\n", lineCount, line);
             
             char *mainWord = strtok(line, "=");
             if (!mainWord || strlen(mainWord) == 0) {
@@ -283,40 +268,42 @@ TTree2 *fillTree(const char *filename) {
                    mainWord, countWordNodes(synonyms), countWordNodes(NULL));
                 
             root = insertBST2(root, mainWord, synonyms, NULL);
-        } else {
-            *hashpos = '\0';
-            
-            char *mainWord = strtok(line, "=");
-            if (!mainWord || strlen(mainWord) == 0) {
-                printf("\033[0;31mLine %d has no main word before '='\033[0m\n", lineCount);
-                continue;
-            }
-            
-            WordNode *synonyms = NULL;
-            char *token = strtok(NULL, "=");
-            while (token != NULL) {
-                insertAtEnd(&synonyms, token);
-                token = strtok(NULL, "=");
-            }
-            
-            WordNode *antonyms = NULL;
-            char *ant = hashpos + 1;
-            token = strtok(ant, "=");
-            while (token != NULL) {
-                insertAtEnd(&antonyms, token);
-                token = strtok(NULL, "=");
-            }
-            
-            printf("\033[0;34mInserting word: '%s' with '%d' synonyms and '%d' antonyms......\n\033[0m\n", 
-                   mainWord, countWordNodes(synonyms), countWordNodes(antonyms));
-                   
-            root = insertBST2(root, mainWord, synonyms, antonyms);
+            continue;
         }
+        
+        *hashpos = '\0';
+        
+        char *mainWord = strtok(line, "=");
+        if (!mainWord || strlen(mainWord) == 0) {
+            printf("\033[0;31mLine %d has no main word before '='\033[0m\n", lineCount);
+            continue;
+        }
+        
+        WordNode *synonyms = NULL;
+        char *token = strtok(NULL, "=");
+        while (token != NULL) {
+            insertAtEnd(&synonyms, token);
+            token = strtok(NULL, "=");
+        }
+        
+        WordNode *antonyms = NULL;
+        char *ant = hashpos + 1;
+        token = strtok(ant, "=");
+        while (token != NULL) {
+            insertAtEnd(&antonyms, token);
+            token = strtok(NULL, "=");
+        }
+        
+        printf("\033[0;34mInserting word: '%s' with '%d' synonyms and '%d' antonyms......\n\033[0m\n", 
+               mainWord, countWordNodes(synonyms), countWordNodes(antonyms));
+               
+        root = insertBST2(root, mainWord, synonyms, antonyms);
     }
+    
     printf("Done\n");
     fclose(f);
     if (!root) {
-        printf("\033[0;31mTree is empty. Can't work with that file!\033[0m\n");
+        printf(" \033[0;31mTree is empty. Can't work with that file! \033[0m\n");
     }
     return root;
 }
@@ -339,21 +326,21 @@ void printTreeNodeCharacteristics(TTree2 *tr, char *word) {
         return;
     }
     
-    printf("Word: %s\n", word);
-    printf("Word length: %d\n", strlen(word));
-    printf("Number Of Vowels: %d\n", countVowels(word));
-    printf("Synonym(s) of %s: ", word);
+    printf("Word : %s\n", word);
+    printf("Word length : %d\n", (int)strlen(word));
+    printf("Number Of Vowels : %d\n", tree_countVowels(word));
+    printf("Synonym(s) of %s : ", word);
     printWordNodeList(target->synonym);
-    printf("Antonym(s) of %s: ", word);
+    printf("Antonym(s) of %s : ", word);
     printWordNodeList(target->antonym);
 }
 
-void AddWordBST(TTree2 *tr, char *word, WordNode *synonyms, WordNode *antonyms, TStack2 **stk) {
-    if (!(*stk)) *stk = createTreeStack();  
+void AddWordBST(TTree2 *tr, char *word, WordNode *synonyms, WordNode *antonyms, TStack2Tree **stk) {
+    if (!(*stk)) *stk = createStack2();  
     
     if (!tr) {
         tr = createTreeNode2(word, synonyms, antonyms);
-        pushTree(*stk, tr);
+        push2(*stk, tr);
         return;
     }
     
@@ -381,7 +368,7 @@ TTree2 *deleteWordBST(TTree2 *tr, char *word) {
             free(tr);
             return temp;
         }
-        // Two children below the root
+        // Two children below the root father
         TTree2 *temp = findMinNode2(tr->right);
         strcpy(tr->word, temp->word);
         tr->synonym = copyNodeList(temp->synonym);
@@ -403,10 +390,10 @@ TTree2 *UpdateWordBST(TTree2 *tr, char *word, char *syne, char *anton) {
 void printTrNode(TTree2 *tr) {
     if (!tr) return;  
     
-    printf("\033[0;32mWord: %s\033[0m\n", tr->word);
-    printf("\033[0;36mSynonym(s) of %s\033[0m: ", tr->word);
+    printf("\033[0;32mWord : %s \033[0m\n", tr->word);
+    printf("\033[0;36mSynonym(s) of %s \033[0m: ", tr->word);
     printWordNodeList(tr->synonym);
-    printf("\033[0;35mAntonym(s) of %s:\033[0m ", tr->word);
+    printf("\033[0;35mAntonym(s) of %s : \033[0m", tr->word);
     printWordNodeList(tr->antonym);
     printf("\n");
 }
@@ -491,20 +478,20 @@ void TraversalBSTpostOrder(TTree2 *tr) {
     printTrNode(tr);
 }
 
-TreeQueue *StoreBSTinOrder(TTree2 *tr) {
-    TreeQueue *q = createTreeQueue();
+TQueue *StoreBSTinOrder(TTree2 *tr) {
+    TQueue *q = tree_createQueue();
     StoreBSTinOrderHelper(tr, &q);
     return q;
 }
 
-TreeQueue *StoreBSTpreOrder(TTree2 *tr) {
-    TreeQueue *q = createTreeQueue();
+TQueue *StoreBSTpreOrder(TTree2 *tr) {
+    TQueue *q = tree_createQueue();
     StoreBSTpreOrderHelper(tr, &q);
     return q;
 }
 
-TreeQueue *StoreBSTpostOrder(TTree2 *tr) {
-    TreeQueue *q = createTreeQueue();
+TQueue *StoreBSTpostOrder(TTree2 *tr) {
+    TQueue *q = tree_createQueue();
     StoreBSTpostOrderHelper(tr, &q);
     return q;
 }
@@ -512,8 +499,8 @@ TreeQueue *StoreBSTpostOrder(TTree2 *tr) {
 void HighSizeBST(TTree2 *tr) {
     int count = 0;
     SizeBSTHelper(tr, &count);
-    printf("The size of the BST is: %d\n ", count);
-    printf("The height of the BST is: %d\n ", HighBSTHelper(tr));
+    printf("The size of the BST is : %d\n", count);
+    printf("The height of the BST is : %d\n", HighBSTHelper(tr));
 }
 
 TTree2 *LowestCommonAncestor(TTree2 *tr, char *word1, char *word2) {
@@ -536,19 +523,19 @@ int CountNodesRanges(TTree2 *tr, int l, int h) {
 TTree2 *inOrderSuccesor(TTree2 *tr, char *word) {
     if (!tr) return NULL;  
     
-    TreeQueue *q = StoreBSTinOrder(tr);
-    if (isTreeQueueEmpty(q)) return NULL; 
+    TQueue *q = StoreBSTinOrder(tr);
+    if (isEmptyQueue(q)) return NULL; 
     
     TTree2 *target = getInfWordTree(tr, word);
     if (!target) return NULL;  
     
     TTree2 *current = NULL;
     
-    while (!isTreeQueueEmpty(q)) {
-        current = dequeueTree(q);
+    while (!isEmptyQueue(q)) {
+        current = dequeue(q);
         if (current == target) {
-            if (!isTreeQueueEmpty(q)) {
-                return dequeueTree(q);  
+            if (!isEmptyQueue(q)) {
+                return dequeue(q);  
             } else {
                 return NULL; 
             }
@@ -560,42 +547,21 @@ TTree2 *inOrderSuccesor(TTree2 *tr, char *word) {
 
 TTree2 *BSTMirror(TTree2 *tr) {
     if (!tr) return NULL;
-    TTree2 *temp = tr->left;
-    tr->left = BSTMirror(tr->right);
-    tr->right = BSTMirror(temp);
+    TTree2 *temp;
+    temp = tr->left;
+    tr->left = tr->right;
+    tr->right = temp;
+    BSTMirror(tr->left);
+    BSTMirror(tr->right);
     return tr;
 }
 
-bool isBalencedBST(TTree2 *tr) {
-    if (!tr) return true;
+int isBalencedBST(TTree2 *tr) {
+    if (!tr) return 1;  
     
     int lh = HighBSTHelper(tr->left);
     int rh = HighBSTHelper(tr->right);
+    int checked = (abs(lh-rh) <= 1);
     
-    if (abs(lh - rh) <= 1 && isBalencedBST(tr->left) && isBalencedBST(tr->right))
-        return true;
-    
-    return false;
-}
-
-TTree2 *BTSMerge(TTree2 *tr1, TTree2 *tr2) {
-    if (!tr1) return tr2;
-    if (!tr2) return tr1;
-    
-    TreeQueue *q1 = StoreBSTinOrder(tr1);
-    TreeQueue *q2 = StoreBSTinOrder(tr2);
-    
-    TTree2 *root = NULL;
-    
-    while (!isTreeQueueEmpty(q1)) {
-        TTree2 *node = dequeueTree(q1);
-        root = insertBST2(root, node->word, node->synonym, node->antonym);
-    }
-    
-    while (!isTreeQueueEmpty(q2)) {
-        TTree2 *node = dequeueTree(q2);
-        root = insertBST2(root, node->word, node->synonym, node->antonym);
-    }
-    
-    return root;
+    return checked && isBalencedBST(tr->left) && isBalencedBST(tr->right);
 }

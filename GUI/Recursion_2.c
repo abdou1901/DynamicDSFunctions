@@ -1,9 +1,10 @@
-#include "recursion_2.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
 #include <math.h>
+#include "Recursion_2.h"
+#include "../Recursion/🔹PART I/Recursion_1.h" 
 
 FILE *openFile(const char *filename, const char *mode) {
     FILE *f = fopen(filename, mode);
@@ -46,67 +47,69 @@ int countWordOccurrence(FILE *f, const char *word) {
     return count + countWordOccurrence(f, word);
 }
 
-FILE *removeWordOccurence(FILE *f, char *word) {
+FILE *removeWordOccurence(FILE *f, char *word){
     char line1[512];
-    FILE *temp = fopen("temp.txt", "a");
-    if (!temp) {
+    FILE *temp=fopen("temp.txt","a");
+    if (!temp)
+    {
         perror("File name not found");
         return NULL;
     }
     
     if (fgets(line1, sizeof(line1), f) == NULL)  return NULL;  
 
-    char *pos = line1;
+    char *pos=line1;
     
-    while ((pos = strstr(pos, word)) != NULL) {
-        memmove(pos, pos + strlen(word), strlen(pos + strlen(word)) + 1);
+    while ((pos =strstr(pos,word))!=NULL)
+    {
+        memmove(pos,pos+strlen(word),strlen(pos+strlen(word))+1);
     }
-    fputs(line1, temp);
-    removeWordOccurence(f, word);
+    fputs(line1,temp);
+    removeWordOccurence(f,word);
     fclose(f);
     return temp;
 } 
 
-FILE *replaceWordOccurence(FILE *f, char *word, char *rep) {
+FILE *replaceWordOccurence(FILE *f, char *word, char *rep){
     char line1[512];
-    FILE *temp = fopen("temp.txt", "a");
-    if (!temp) {
+    FILE *temp=fopen("temp.txt","a");
+    if (!temp)
+    {
         perror("File name not found");
         return NULL;
     }
     
     if (fgets(line1, sizeof(line1), f) == NULL)  return NULL;  
 
-    char *pos = line1;
-    if (strlen(word) >= strlen(rep)) {
-        while ((pos = strstr(pos, word)) != NULL) {
+    char *pos=line1;
+    if (strlen(word)>=strlen(rep))
+    {
+        while ((pos=strstr(pos,word))!=NULL)
+        {
             memcpy(pos, rep, strlen(rep));
             memmove(pos + strlen(rep), pos + strlen(word), strlen(pos + strlen(word)) + 1);
+            
         } 
-        fputs(line1, temp);
-        replaceWordOccurence(f, word, rep);
+        fputs(line1,temp);
+        replaceWordOccurence(f,word,rep);
         fclose(f);
         return temp;
     }
-    
-    int found = 0;
+    int found=0;
     char line[512];
-    while ((pos = strstr(pos, word)) != NULL) {
-        strncpy(line, line1, pos - line1);
-        strcpy(line + (pos - line1), rep);
-        strcpy(line + (pos - line1) + strlen(rep), pos + strlen(word));
-        pos += strlen(word);
-        found = 1;
-        strcpy(line1, line);
+    while ((pos=strstr(pos,word))!=NULL)
+    {
+        strncpy(line,line1,pos-line1);
+        strcpy(line+(pos-line1),rep);
+        strcpy(line+(pos-line1)+strlen(rep),pos+strlen(word));
+        pos+=strlen(word);
+        found=1;
+        strcpy(line1,line);
     } 
-    
     if (found) {
-        fputs(line, temp);
-    } else {
-        fputs(line1, temp);
-    }
-    
-    replaceWordOccurence(f, word, rep);
+        fputs(line,temp);
+    }else fputs(line1,temp);
+    replaceWordOccurence(f,word,rep);
     fclose(f);
     return temp;
 }
@@ -117,10 +120,10 @@ void permute(char *word, int index) {
         printf("%s\t", word);
         return;
     }
-    loop(index, len, index, word);
+    loop(index,len,index,word);
 }
 
-void loop(int i, int end, int index, char *word) {
+void loop(int i, int end, int index, char *word){
     if (i >= end) return;
     
     char temp = word[index];
@@ -132,11 +135,11 @@ void loop(int i, int end, int index, char *word) {
     temp = word[index];
     word[index] = word[i];
     word[i] = temp;
-    loop(i + 1, end, index, word);
+    loop(i+1,end,index,word);
 }
 
 void wordPermutation(char *word) {
-    permute(word, 0);
+    permute(word,0);
 }
 
 void generateSubsequences(char *word, int index, char *currentSubseq, int subseqIndex) {
@@ -160,18 +163,18 @@ void subseqWord(char *word) {
     generateSubsequences(word, 0, currentSubseq, 0);
 }
 
-int max(int a, int b) {
+int max(int a, int b){
     if (a > b) return a;
     return b;
 }
 
-int longestSubseqWord(char *word1, char *word2) {
+int longestSubseqWord(char *word1, char *word2){
     if (word1[0] == '\0' || word2[0] == '\0') return 0;
     
     if (word1[0] == word2[0]) {
-        return 1 + longestSubseqWord(word1 + 1, word2 + 1);
+        return 1 + longestSubseqWord(word1+1, word2+1);
     } else {
-        return max(longestSubseqWord(word1, word2 + 1), longestSubseqWord(word1 + 1, word2));
+        return max(longestSubseqWord(word1, word2+1), longestSubseqWord(word1+1, word2));
     }
 }
 
@@ -192,18 +195,26 @@ int distinctSubseqWord(char *word) {
     return count;
 }
 
-bool isPalindromWord(char *word) {
+bool isPalindromWord(char *word){
     int len = strlen(word);
     if (len == 1) return true;
-    char temp[len - 1];
-    temp[len - 1] = '\0';
-    if (word[0] == word[len - 1]) {
-        strcpy(temp, word + 1);
-        temp[len - 2] = '\0';
+    char temp[len-1];
+    temp[len-1] = '\0';
+    if (word[0] == word[len-1]) {
+        strcpy(temp, word+1);
+        temp[len-2] = '\0';
         return isPalindromWord(temp);
     }
     return false;
 }
+
+#define MAX_LINE_LENGTH 512
+
+typedef struct {
+    char **lines;
+    int top;
+    int capacity;
+} Stack;
 
 Stack *createStack(int capacity) {
     Stack *stack = (Stack *)malloc(sizeof(Stack));
@@ -214,42 +225,54 @@ Stack *createStack(int capacity) {
 }
 
 void push(Stack *stack, const char *line) {
-    if (stack->top == stack->capacity - 1) {
-        printf("Stack overflow!\n");
-        return;
+    if (stack->top < stack->capacity - 1) {
+        stack->top++;
+        stack->lines[stack->top] = strdup(line);
     }
-    
-    stack->lines[++stack->top] = strdup(line);
 }
 
 char *pop(Stack *stack) {
     if (stack->top == -1) {
-        printf("Stack underflow!\n");
         return NULL;
     }
-    
-    return stack->lines[stack->top--];
+    char *line = stack->lines[stack->top];
+    stack->top--;
+    return line;
 }
 
 void reverseFile(const char *inputFilename, const char *outputFilename) {
-    FILE *inputFile = openFile(inputFilename, "r");
-    FILE *outputFile = openFile(outputFilename, "w");
-    
-    Stack *stack = createStack(1000); // Assume max 1000 lines
-    char *line;
-    
-    // Read all lines and push to stack
-    while ((line = readLine(inputFile)) != NULL) {
-        push(stack, line);
+    FILE *inputFile = fopen(inputFilename, "r");
+    if (!inputFile) {
+        perror("Unable to open the input file");
+        return;
     }
-    
-    // Pop from stack and write to output file
-    while ((line = pop(stack)) != NULL) {
-        fputs(line, outputFile);
-        free(line);
+
+    FILE *outputFile = fopen(outputFilename, "w");
+    if (!outputFile) {
+        perror("Unable to open the output file");
+        fclose(inputFile);
+        return;
     }
+
+    char line[MAX_LINE_LENGTH];
+    int lineCount = 0;
     
-    // Clean up
+    while (fgets(line, sizeof(line), inputFile) != NULL) {
+        lineCount++;
+    }
+    Stack *stack = createStack(lineCount);
+    rewind(inputFile);
+
+    while (fgets(line, sizeof(line), inputFile) != NULL) {
+         push(stack, line);
+    }
+
+    char *lineToWrite;
+    while ((lineToWrite = pop(stack)) != NULL) {
+        fputs(lineToWrite, outputFile);
+        free(lineToWrite);
+    }
+
     fclose(inputFile);
     fclose(outputFile);
     free(stack->lines);
@@ -257,6 +280,6 @@ void reverseFile(const char *inputFilename, const char *outputFilename) {
 }
 
 void replaceFile(const char *original, const char *temp) {
-    remove(original);
-    rename(temp, original);
+    remove(original);        
+    rename(temp, original);  
 }
