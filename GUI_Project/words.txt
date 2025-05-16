@@ -1,0 +1,10 @@
+happy=joyful=cheerful=delighted#sad=unhappy=depressed
+smart=intelligent=clever=bright#dumb=stupid=slow
+big=large=huge=enormous#small=tiny=little
+fast=quick=rapid=swift#slow=sluggish=plodding
+hot=warm=burning=scalding#cold=chilly=freezing
+beautiful=pretty=attractive=gorgeous#ugly=unattractive=hideous
+good=excellent=fine=great#bad=poor=terrible
+strong=powerful=mighty=sturdy#weak=feeble=frail
+rich=wealthy=affluent=prosperous#poor=destitute=impoverished
+loud=noisy=boisterous=clamorous#quiet=silent=hushed
