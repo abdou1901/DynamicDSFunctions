@@ -4,7 +4,7 @@
 #include <string.h>
 #include <ctype.h>
 
-// Utility functions
+//* Utility functions
 void printCentered(char *str, int width) {
     int len = strlen(str);
     if (len > width - 2) len = width - 2;
@@ -166,7 +166,7 @@ int count_syllables(const char *word) {
     return count;
 }
 
-// Queue operations
+//* Queue operations
 TQueue *createQueue() {
     TQueue *queue = (TQueue *)malloc(sizeof(TQueue));
     queue->front = queue->rear = NULL;

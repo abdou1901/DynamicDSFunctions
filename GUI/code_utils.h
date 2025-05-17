@@ -3,7 +3,7 @@
 
 #include "unified_data_structures.h"
 
-// Utility functions
+//* Utility functions
 void printCentered(char *str, int width);
 bool includes(char *str, char c, int size);
 int countVowels(char *str);
@@ -33,12 +33,12 @@ CNode *popFromStack(TStack *stk);
 CNode *searchNodeInStack(TStack *stk, char *word);
 void insertSorted(TStack *stk, CNode *newnode);
 
-// Simple stack operations
+//* Simple stack operations
 bool isSimpleStackEmpty(TStack2 *stk);
 void push(TStack2 *stk, char c);
 char pop(TStack2 *stk);
 
-// Vowel type functions
+//* Vowel type functions
 VowelType getVowelType(const char *word);
 
 #endif // CODE_UTILS_H

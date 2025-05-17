@@ -3,7 +3,7 @@
 
 #include "unified_data_structures.h"
 
-// Trees functions
+//* Trees functions
 TTree2* fw_fillTree(const char *filename);
 void fw_printTreeNodeCharacteristics(TTree2 *tr, char *word);
 void fw_TraversalBSTinOrder(TTree2 *tr);

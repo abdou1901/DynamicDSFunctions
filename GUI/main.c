@@ -6,7 +6,8 @@
 #include <string.h>
 #include "functions_wrapper.h"
 
-// Window handles
+//* This isn't my own work i used youtube and AI its really obvious
+//* Window handles
 HWND hWnd;
 HWND hCategoryCombo;
 HWND hFunctionCombo;
@@ -15,10 +16,10 @@ HWND hRunButton;
 HWND hResultText;
 HWND hStatusBar;
 
-// Global tree pointer for storing the loaded tree
+//* Global tree pointer for storing the loaded tree
 TTree2 *global_tree = NULL;
 
-// Function categories
+//* Function categories
 typedef enum {
     CATEGORY_TREES,
     CATEGORY_CODE,
@@ -32,7 +33,7 @@ const char* category_names[NUM_CATEGORIES] = {
     "Recursion"
 };
 
-// Function information structure
+//* Function information structure
 typedef struct {
     const char *name;
     const char *description;
@@ -42,7 +43,7 @@ typedef struct {
     const char **arg_types;
 } FunctionInfo;
 
-// Function information array
+//* Function information array
 FunctionInfo functions[] = {
     {"fillTree", "Load a dictionary from a file", CATEGORY_TREES, 1, 
      (const char*[]){"Filename"}, 
@@ -125,19 +126,19 @@ FunctionInfo functions[] = {
      (const char*[]){"string"}}
 };
 
-// Number of functions
+//* Number of functions
 const int num_functions = sizeof(functions) / sizeof(functions[0]);
 
-// Array to store input widgets
+//* Array to store input widgets
 HWND input_widgets[10];  // Assuming max 10 arguments per function
 int current_function_index = -1;
 
-// Redirect stdout to a string buffer
+//* Redirect stdout to a string buffer
 #define BUFFER_SIZE 65536
 char result_buffer[BUFFER_SIZE];
 size_t buffer_pos = 0;
 
-// Custom stdout function
+//* Custom stdout function
 int custom_printf(const char *format, ...) {
     va_list args;
     va_start(args, format);
@@ -145,7 +146,7 @@ int custom_printf(const char *format, ...) {
     char temp_buffer[1024];
     int result = vsprintf(temp_buffer, format, args);
     
-    // Append to our buffer
+    //* Append to our buffer
     size_t len = strlen(temp_buffer);
     if (buffer_pos + len < BUFFER_SIZE - 1) {
         strcpy(result_buffer + buffer_pos, temp_buffer);
@@ -156,9 +157,9 @@ int custom_printf(const char *format, ...) {
     return result;
 }
 
-// Function to clear the arguments container
+//* Function to clear the arguments container
 void ClearArgsContainer() {
-    // Destroy all child windows
+    //* Destroy all child windows
     HWND child = GetWindow(hArgsContainer, GW_CHILD);
     while (child) {
         HWND next = GetWindow(child, GW_HWNDNEXT);
@@ -167,7 +168,7 @@ void ClearArgsContainer() {
     }
 }
 
-// Function to update the arguments container based on the selected function
+//* Function to update the arguments container based on the selected function
 void UpdateArgsContainer(int function_index) {
     ClearArgsContainer();
     
@@ -178,19 +179,19 @@ void UpdateArgsContainer(int function_index) {
     current_function_index = function_index;
     FunctionInfo *func = &functions[function_index];
     
-    // Create labels and input fields for each argument
+    //* Create labels and input fields for each argument
     for (int i = 0; i < func->num_args; i++) {
-        // Create label for argument
+        //* Create label for argument
         CreateWindow(
             "STATIC", func->arg_names[i],
             WS_CHILD | WS_VISIBLE | SS_LEFT,
             10, 10 + i * 30, 100, 20,
             hArgsContainer, NULL, GetModuleHandle(NULL), NULL);
         
-        // Create input widget based on argument type
+        //* Create input widget based on argument type
         if (strcmp(func->arg_types[i], "tree") == 0) {
-            // For tree arguments, create a label showing if tree  "tree") == 0) {
-            // For tree arguments, create a label showing if tree is loaded
+            //* For tree arguments, create a label showing if tree  "tree") == 0) {
+            //* For tree arguments, create a label showing if tree is loaded
             HWND tree_label = CreateWindow(
                 "STATIC", global_tree ? "Tree loaded" : "No tree loaded",
                 WS_CHILD | WS_VISIBLE | SS_LEFT,
@@ -198,7 +199,7 @@ void UpdateArgsContainer(int function_index) {
                 hArgsContainer, NULL, GetModuleHandle(NULL), NULL);
             input_widgets[i] = tree_label;
         } else {
-            // For other arguments, create an edit control
+            //* For other arguments, create an edit control
             HWND edit = CreateWindow(
                 "EDIT", "",
                 WS_CHILD | WS_VISIBLE | WS_BORDER | ES_AUTOHSCROLL,
@@ -209,22 +210,22 @@ void UpdateArgsContainer(int function_index) {
     }
 }
 
-// Function to update the function combo box based on the selected category
+//* Function to update the function combo box based on the selected category
 void UpdateFunctionCombo(int category_index) {
-    // Clear the combo box
+    //* Clear the combo box
     SendMessage(hFunctionCombo, CB_RESETCONTENT, 0, 0);
     
-    // Add functions for the selected category
+    //* Add functions for the selected category
     for (int i = 0; i < num_functions; i++) {
         if (functions[i].category == category_index) {
             SendMessage(hFunctionCombo, CB_ADDSTRING, 0, (LPARAM)functions[i].name);
         }
     }
     
-    // Select the first item
+    //* Select the first item
     SendMessage(hFunctionCombo, CB_SETCURSEL, 0, 0);
     
-    // Update the arguments container
+    //* Update the arguments container
     int function_index = -1;
     for (int i = 0; i < num_functions; i++) {
         if (functions[i].category == category_index) {
@@ -238,7 +239,7 @@ void UpdateFunctionCombo(int category_index) {
     }
 }
 
-// Function to get the selected function index
+//* Function to get the selected function index
 int GetSelectedFunctionIndex() {
     int category_index = SendMessage(hCategoryCombo, CB_GETCURSEL, 0, 0);
     int function_index = SendMessage(hFunctionCombo, CB_GETCURSEL, 0, 0);
@@ -247,7 +248,7 @@ int GetSelectedFunctionIndex() {
         return -1;
     }
     
-    // Find the actual function index
+    //* Find the actual function index
     int count = 0;
     for (int i = 0; i < num_functions; i++) {
         if (functions[i].category == category_index) {
@@ -261,7 +262,7 @@ int GetSelectedFunctionIndex() {
     return -1;
 }
 
-// Function to execute the selected function
+//* Function to execute the selected function
 void ExecuteFunction() {
     int function_index = GetSelectedFunctionIndex();
     if (function_index < 0) {
@@ -271,11 +272,11 @@ void ExecuteFunction() {
     
     FunctionInfo *func = &functions[function_index];
     
-    // Clear the result buffer
+    //* Clear the result buffer
     memset(result_buffer, 0, BUFFER_SIZE);
     buffer_pos = 0;
     
-    // Execute the function based on its name
+    //* Execute the function based on its name
     if (strcmp(func->name, "fillTree") == 0) {
         char filename[256];
         GetWindowText(input_widgets[0], filename, sizeof(filename));
@@ -301,12 +302,12 @@ void ExecuteFunction() {
         
         custom_printf("Printing characteristics for word: %s\n", word);
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -315,14 +316,14 @@ void ExecuteFunction() {
         
         fw_printTreeNodeCharacteristics(global_tree, word);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -332,7 +333,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "TraversalBSTinOrder") == 0) {
@@ -343,12 +344,12 @@ void ExecuteFunction() {
         
         custom_printf("In-order traversal of the tree:\n");
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -357,14 +358,14 @@ void ExecuteFunction() {
         
         fw_TraversalBSTinOrder(global_tree);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -374,7 +375,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "TraversalBSTpreOrder") == 0) {
@@ -385,12 +386,12 @@ void ExecuteFunction() {
         
         custom_printf("Pre-order traversal of the tree:\n");
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -399,14 +400,14 @@ void ExecuteFunction() {
         
         fw_TraversalBSTpreOrder(global_tree);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -416,7 +417,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "TraversalBSTpostOrder") == 0) {
@@ -427,12 +428,12 @@ void ExecuteFunction() {
         
         custom_printf("Post-order traversal of the tree:\n");
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -441,14 +442,14 @@ void ExecuteFunction() {
         
         fw_TraversalBSTpostOrder(global_tree);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -458,7 +459,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "deleteWordBST") == 0) {
@@ -533,12 +534,12 @@ void ExecuteFunction() {
         
         custom_printf("Tree height and size:\n");
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -547,14 +548,14 @@ void ExecuteFunction() {
         
         fw_HighSizeBST(global_tree);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -564,7 +565,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "LowestCommonAncestor") == 0) {
@@ -659,15 +660,15 @@ void ExecuteFunction() {
         
         custom_printf("Generating permutations for word '%s'\n", word);
         
-        // Create a copy of the word since wordPermutation modifies it
+        //* Create a copy of the word since wordPermutation modifies it
         char *word_copy = strdup(word);
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -677,14 +678,14 @@ void ExecuteFunction() {
         
         fw_wordPermutation(word_copy);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -694,7 +695,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
         free(word_copy);
     }
@@ -704,12 +705,12 @@ void ExecuteFunction() {
         
         custom_printf("Generating subsequences for word '%s'\n", word);
         
-        // Create a temporary file for capturing stdout
+        //* Create a temporary file for capturing stdout
         char tempFilename[MAX_PATH];
         GetTempPath(MAX_PATH, tempFilename);
         strcat(tempFilename, "tree_output.txt");
         
-        // Redirect stdout to the temp file
+        //* Redirect stdout to the temp file
         FILE *temp_file = freopen(tempFilename, "w", stdout);
         if (!temp_file) {
             custom_printf("Error redirecting output.\n");
@@ -718,14 +719,14 @@ void ExecuteFunction() {
         
         fw_subseqWord(word);
         
-        // Close and reopen stdout
+        //* Close and reopen stdout
         fclose(stdout);
         FILE *console = freopen("CON", "w", stdout);
         if (!console) {
             custom_printf("Error restoring output.\n");
         }
         
-        // Read from the temp file
+        //* Read from the temp file
         FILE *read_temp = fopen(tempFilename, "r");
         if (read_temp) {
             char line[1024];
@@ -735,7 +736,7 @@ void ExecuteFunction() {
             fclose(read_temp);
         }
         
-        // Delete the temp file
+        //* Delete the temp file
         remove(tempFilename);
     }
     else if (strcmp(func->name, "longestSubseqWord") == 0) {
@@ -778,11 +779,11 @@ void ExecuteFunction() {
     }
 
 update_result:
-    // Update the result text
+    //* Update the result text
     SetWindowText(hResultText, result_buffer);
 }
 
-// Add a file browser dialog
+//* Add a file browser dialog
 void OpenFileBrowser() {
     OPENFILENAME ofn;
     char szFile[260] = {0};
@@ -800,93 +801,93 @@ void OpenFileBrowser() {
     ofn.Flags = OFN_PATHMUSTEXIST | OFN_FILEMUSTEXIST;
     
     if (GetOpenFileName(&ofn)) {
-        // Get the current function index
+        //* Get the current function index
         int function_index = GetSelectedFunctionIndex();
         if (function_index >= 0 && functions[function_index].num_args > 0) {
-            // Set the filename in the first input field
+            //* Set the filename in the first input field
             SetWindowText(input_widgets[0], szFile);
         }
     }
 }
 
-// Window procedure
+//* Window procedure
 LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
     switch (msg) {
         case WM_CREATE: {
-            // Initialize common controls
+            //* Initialize common controls
             INITCOMMONCONTROLSEX icex;
             icex.dwSize = sizeof(INITCOMMONCONTROLSEX);
             icex.dwICC = ICC_WIN95_CLASSES;
             InitCommonControlsEx(&icex);
             
-            // Create category combo box
+            //* Create category combo box
             hCategoryCombo = CreateWindow(
                 "COMBOBOX", NULL,
                 WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_VSCROLL,
                 10, 10, 150, 200,
                 hwnd, (HMENU)1, GetModuleHandle(NULL), NULL);
             
-            // Add categories to the combo box
+            //* Add categories to the combo box
             for (int i = 0; i < NUM_CATEGORIES; i++) {
                 SendMessage(hCategoryCombo, CB_ADDSTRING, 0, (LPARAM)category_names[i]);
             }
             
-            // Select the first category
+            //* Select the first category
             SendMessage(hCategoryCombo, CB_SETCURSEL, 0, 0);
             
-            // Create function combo box
+            //* Create function combo box
             hFunctionCombo = CreateWindow(
                 "COMBOBOX", NULL,
                 WS_CHILD | WS_VISIBLE | CBS_DROPDOWNLIST | WS_VSCROLL,
                 170, 10, 300, 200,
                 hwnd, (HMENU)2, GetModuleHandle(NULL), NULL);
             
-            // Create arguments container
+            //* Create arguments container
             hArgsContainer = CreateWindow(
                 "STATIC", NULL,
                 WS_CHILD | WS_VISIBLE | WS_BORDER,
                 10, 50, 460, 200,
                 hwnd, NULL, GetModuleHandle(NULL), NULL);
             
-            // Create run button
+            //* Create run button
             hRunButton = CreateWindow(
                 "BUTTON", "Run",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 10, 260, 100, 30,
                 hwnd, (HMENU)3, GetModuleHandle(NULL), NULL);
             
-            // Create browse button
+            //* Create browse button
             CreateWindow(
                 "BUTTON", "Browse...",
                 WS_CHILD | WS_VISIBLE | BS_PUSHBUTTON,
                 120, 260, 100, 30,
                 hwnd, (HMENU)4, GetModuleHandle(NULL), NULL);
             
-            // Create result text
+            //* Create result text
             hResultText = CreateWindow(
                 "EDIT", "",
                 WS_CHILD | WS_VISIBLE | WS_BORDER | ES_MULTILINE | ES_AUTOVSCROLL | WS_VSCROLL | ES_READONLY,
                 10, 300, 760, 250,
                 hwnd, NULL, GetModuleHandle(NULL), NULL);
             
-            // Create status bar
+            //* Create status bar
             hStatusBar = CreateWindow(
                 STATUSCLASSNAME, NULL,
                 WS_CHILD | WS_VISIBLE | SBARS_SIZEGRIP,
                 0, 0, 0, 0,
                 hwnd, (HMENU)5, GetModuleHandle(NULL), NULL);
             
-            // Update the function combo box
+            //* Update the function combo box
             UpdateFunctionCombo(0);
             
-            // Set a default font for all controls
+            //* Set a default font for all controls
             HFONT hFont = (HFONT)GetStockObject(DEFAULT_GUI_FONT);
             SendMessage(hCategoryCombo, WM_SETFONT, (WPARAM)hFont, TRUE);
             SendMessage(hFunctionCombo, WM_SETFONT, (WPARAM)hFont, TRUE);
             SendMessage(hRunButton, WM_SETFONT, (WPARAM)hFont, TRUE);
             SendMessage(hResultText, WM_SETFONT, (WPARAM)hFont, TRUE);
             
-            // Set status bar text
+            //* Set status bar text
             SendMessage(hStatusBar, SB_SETTEXT, 0, (LPARAM)"Ready");
             
             break;
@@ -896,16 +897,16 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
             int wmId = LOWORD(wParam);
             int wmEvent = HIWORD(wParam);
             
-            // Parse the menu selections
+            //* Parse the menu selections
             switch (wmId) {
-                case 1: // Category combo box
+                case 1: //* Category combo box
                     if (wmEvent == CBN_SELCHANGE) {
                         int category_index = SendMessage(hCategoryCombo, CB_GETCURSEL, 0, 0);
                         UpdateFunctionCombo(category_index);
                     }
                     break;
                 
-                case 2: // Function combo box
+                case 2: //* Function combo box
                     if (wmEvent == CBN_SELCHANGE) {
                         int function_index = GetSelectedFunctionIndex();
                         if (function_index >= 0) {
@@ -914,11 +915,11 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
                     }
                     break;
                 
-                case 3: // Run button
+                case 3: //* Run button
                     ExecuteFunction();
                     break;
                 
-                case 4: // Browse button
+                case 4: //* Browse button
                     OpenFileBrowser();
                     break;
                 
@@ -929,14 +930,14 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
         }
         
         case WM_SIZE: {
-            // Resize the status bar
+            //* Resize the status bar
             SendMessage(hStatusBar, WM_SIZE, 0, 0);
             
-            // Get the client area size
+            //* Get the client area size
             RECT rcClient;
             GetClientRect(hwnd, &rcClient);
             
-            // Resize the result text
+            //* Resize the result text
             SetWindowPos(hResultText, NULL, 10, 300, rcClient.right - 20, rcClient.bottom - 310, SWP_NOZORDER);
             
             break;
@@ -958,7 +959,7 @@ LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 }
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
-    // Register the window class
+    //* Register the window class
     WNDCLASSEX wc;
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = 0;
@@ -978,7 +979,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 0;
     }
     
-    // Create the window
+    //* Create the window
     hWnd = CreateWindowEx(
         WS_EX_CLIENTEDGE,
         "TreeGUIClass",
@@ -992,11 +993,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
         return 0;
     }
     
-    // Show the window
+    //* Show the window
     ShowWindow(hWnd, nCmdShow);
     UpdateWindow(hWnd);
     
-    // Message loop
+    //* Message loop
     MSG msg;
     while (GetMessage(&msg, NULL, 0, 0) > 0) {
         TranslateMessage(&msg);

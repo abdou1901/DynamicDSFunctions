@@ -2,7 +2,7 @@
 #include "tree_utils.h"
 #include "recursion_utils.h"
 
-// Trees functions
+//* Trees functions
 TTree2* fw_fillTree(const char *filename) {
     return fillTree(filename);
 }
