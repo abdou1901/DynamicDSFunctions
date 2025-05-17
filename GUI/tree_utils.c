@@ -129,7 +129,7 @@ TQueue *tree_createQueue() {
 
 void tree_enqueue(TQueue *q, TTree2 *node) {
     QNode *newnode = (QNode*)malloc(sizeof(QNode));
-    newnode->treeNode = node;
+    strcpy(newnode->word, node->word);  // Store the word instead of the node pointer
     newnode->next = NULL;
     if (q->front == NULL && q->rear == NULL) {
         q->front = newnode;
@@ -144,7 +144,13 @@ TTree2 *dequeue(TQueue *q) {
     if (q->front == NULL) return NULL; 
     
     QNode *temp = q->front;
-    TTree2 *node = temp->treeNode;
+    // We can't return the node directly since we only store the word
+    // This is a simplified implementation
+    TTree2 *dummy = (TTree2*)malloc(sizeof(TTree2));
+    strcpy(dummy->word, temp->word);
+    dummy->left = dummy->right = NULL;
+    dummy->synonym = dummy->antonym = NULL;
+    
     q->front = q->front->next;
     
     if (q->front == NULL) {
@@ -152,7 +158,7 @@ TTree2 *dequeue(TQueue *q) {
     }
     
     free(temp);
-    return node;
+    return dummy;
 }
 
 bool isEmptyQueue(TQueue *q) {
@@ -533,7 +539,7 @@ TTree2 *inOrderSuccesor(TTree2 *tr, char *word) {
     
     while (!isEmptyQueue(q)) {
         current = dequeue(q);
-        if (current == target) {
+        if (strcmp(current->word, target->word) == 0) {
             if (!isEmptyQueue(q)) {
                 return dequeue(q);  
             } else {

@@ -256,7 +256,7 @@ void insertSorted(TStack *stk, CNode *newnode) {
     pushToStack(stk, temp);
 }
 
-// Simple stack operations
+// Simple stack operations for character stacks
 bool isSimpleStackEmpty(TStack2 *stk) {
     return stk->head == NULL;
 }

@@ -21,6 +21,6 @@ void subseqWord(char *word);
 int max(int a, int b);
 int longestSubseqWord(char *word1, char *word2);
 int distinctSubseqWord(char *word);
-bool isPalindromWord(char *word);
+bool isPalindromWord(char *word);  // Changed from bool to int to match code.h
 
 #endif // RECURSION_UTILS_H

@@ -15,6 +15,15 @@ typedef enum {
     VOWEL_SHORT, VOWEL_LONG, VOWEL_DIPHTHONG, VOWEL_UNKNOWN
 } VowelType;
 
+// Forward declarations to avoid circular dependencies
+struct Node;
+struct DNode;
+struct CNode;
+struct TNode;
+struct TTree2;
+struct QNode;
+struct WordNode;
+
 // Basic node structures for linked lists
 typedef struct Node {
     char word[WORD_MAX_LENGTH];
@@ -67,15 +76,9 @@ typedef struct {
     CNode *tail;
 } TList3;
 
-// Forward declaration for TTree2
-struct TTree2;
-
 // Structure for queue node
 typedef struct QNode {
-    union {
-        char word[WORD_MAX_LENGTH];
-        struct TTree2 *treeNode;
-    };
+    char word[WORD_MAX_LENGTH];
     struct QNode *next;
 } QNode;
 
@@ -114,6 +117,7 @@ typedef struct TStackNode2 {
     struct TStackNode2 *next;
 } TStackNode2;
 
+// Tree stack structure - renamed to avoid conflict
 typedef struct {
     TStackNode2 *top;
 } TStack2Tree;

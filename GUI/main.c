@@ -19,6 +19,12 @@ HWND hStatusBar;
 //* Global tree pointer for storing the loaded tree
 TTree2 *global_tree = NULL;
 
+//* Global pointers for lists, stacks, and queues
+TList *global_syn_list = NULL;
+TList *global_ant_list = NULL;
+TStack *global_stack = NULL;
+TQueue *global_queue = NULL;
+
 //* Function categories
 typedef enum {
     CATEGORY_TREES,
@@ -114,79 +120,79 @@ FunctionInfo functions[] = {
      (const char*[]){"Filename"}, 
      (const char*[]){"string"}},
     
-    {"getInfWord", "Get information about a word", CATEGORY_CODE, 3, 
-     (const char*[]){"Synonyms List", "Antonyms List", "Word"}, 
-     (const char*[]){"list", "list", "string"}},
+    {"getInfWord", "Get information about a word", CATEGORY_CODE, 1, 
+     (const char*[]){"Word"}, 
+     (const char*[]){"string"}},
     
-    {"sortWord", "Sort words alphabetically", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"sortWord", "Sort words alphabetically", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"sortWord2", "Sort words by character count", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"sortWord2", "Sort words by character count", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"sortWord3", "Sort words by vowel count", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"sortWord3", "Sort words by vowel count", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"deleteWord", "Delete a word", CATEGORY_CODE, 4, 
-     (const char*[]){"File", "Synonyms List", "Antonyms List", "Word"}, 
-     (const char*[]){"file", "list", "list", "string"}},
+    {"deleteWord", "Delete a word", CATEGORY_CODE, 1, 
+     (const char*[]){"Word"}, 
+     (const char*[]){"string"}},
     
-    {"updateWord", "Update a word", CATEGORY_CODE, 6, 
-     (const char*[]){"File", "Synonyms List", "Antonyms List", "Word", "Synonym", "Antonym"}, 
-     (const char*[]){"file", "list", "list", "string", "string", "string"}},
+    {"updateWord", "Update a word", CATEGORY_CODE, 3, 
+     (const char*[]){"Word", "Synonym", "Antonym"}, 
+     (const char*[]){"string", "string", "string"}},
     
-    {"similarWord", "Find similar words", CATEGORY_CODE, 3, 
-     (const char*[]){"List", "Word", "Match Rate"}, 
-     (const char*[]){"list", "string", "int"}},
+    {"similarWord", "Find similar words", CATEGORY_CODE, 2, 
+     (const char*[]){"Word", "Match Rate"}, 
+     (const char*[]){"string", "int"}},
     
-    {"countWord", "Count words containing substring", CATEGORY_CODE, 2, 
-     (const char*[]){"List", "Substring"}, 
-     (const char*[]){"list", "string"}},
+    {"countWord", "Count words containing substring", CATEGORY_CODE, 1, 
+     (const char*[]){"Substring"}, 
+     (const char*[]){"string"}},
     
-    {"palindromWord", "Find palindrome words", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"palindromWord", "Find palindrome words", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
     // Stack functions
-    {"toStack", "Convert list to stack", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"toStack", "Convert list to stack", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"getInfWordStack", "Get word info from stack", CATEGORY_CODE, 2, 
-     (const char*[]){"Stack", "Word"}, 
-     (const char*[]){"stack", "string"}},
+    {"getInfWordStack", "Get word info from stack", CATEGORY_CODE, 1, 
+     (const char*[]){"Word"}, 
+     (const char*[]){"string"}},
     
-    {"sortWordStack", "Sort stack", CATEGORY_CODE, 1, 
-     (const char*[]){"Stack"}, 
-     (const char*[]){"stack"}},
+    {"sortWordStack", "Sort stack", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"deleteWordStack", "Delete word from stack", CATEGORY_CODE, 2, 
-     (const char*[]){"Stack", "Word"}, 
-     (const char*[]){"stack", "string"}},
+    {"deleteWordStack", "Delete word from stack", CATEGORY_CODE, 1, 
+     (const char*[]){"Word"}, 
+     (const char*[]){"string"}},
     
-    {"updateWordStack", "Update word in stack", CATEGORY_CODE, 4, 
-     (const char*[]){"Stack", "Word", "Synonym", "Antonym"}, 
-     (const char*[]){"stack", "string", "string", "string"}},
+    {"updateWordStack", "Update word in stack", CATEGORY_CODE, 3, 
+     (const char*[]){"Word", "Synonym", "Antonym"}, 
+     (const char*[]){"string", "string", "string"}},
     
-    {"addWordStack", "Add word to stack", CATEGORY_CODE, 4, 
-     (const char*[]){"Stack", "Word", "Synonym", "Antonym"}, 
-     (const char*[]){"stack", "string", "string", "string"}},
+    {"addWordStack", "Add word to stack", CATEGORY_CODE, 3, 
+     (const char*[]){"Word", "Synonym", "Antonym"}, 
+     (const char*[]){"string", "string", "string"}},
     
     // Queue functions
-    {"syllable", "Group words by syllable count", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"syllable", "Group words by syllable count", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"prounounciation", "Group words by pronunciation", CATEGORY_CODE, 1, 
-     (const char*[]){"List"}, 
-     (const char*[]){"list"}},
+    {"prounounciation", "Group words by pronunciation", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
-    {"stackToQueue", "Convert stack to queue", CATEGORY_CODE, 1, 
-     (const char*[]){"Stack"}, 
-     (const char*[]){"stack"}},
+    {"stackToQueue", "Convert stack to queue", CATEGORY_CODE, 0, 
+     (const char*[]){""}, 
+     (const char*[]){""}},
     
     {"wordPermutation", "Generate all permutations of a word", CATEGORY_RECURSION, 1, 
      (const char*[]){"Word"}, 
@@ -863,22 +869,47 @@ void ExecuteFunction() {
         
         custom_printf("Getting synonyms from file: %s\n", filename);
         
-        FILE *f = fopen(filename, "r");
-        if (!f) {
-            custom_printf("Error: Could not open file %s\n", filename);
-            goto update_result;
-        }
+        global_syn_list = fw_getSynWords(filename);
         
-        TList *synList = getSynWords(f);
-        if (synList) {
+        if (global_syn_list) {
             custom_printf("Synonyms list created successfully.\n");
-            printWords(synList, 0);
-            // Store the list for future use
-            // Note: In a real application, you'd need to manage this memory
+            
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "list_output.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printWords(global_syn_list, 0);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
         } else {
             custom_printf("Failed to create synonyms list.\n");
         }
-        fclose(f);
     }
     else if (strcmp(func->name, "getAntoWords") == 0) {
         char filename[256];
@@ -886,153 +917,749 @@ void ExecuteFunction() {
         
         custom_printf("Getting antonyms from file: %s\n", filename);
         
-        FILE *f = fopen(filename, "r");
-        if (!f) {
-            custom_printf("Error: Could not open file %s\n", filename);
-            goto update_result;
-        }
+        global_ant_list = fw_getAntoWords(filename);
         
-        TList *antList = getAntoWords(f);
-        if (antList) {
+        if (global_ant_list) {
             custom_printf("Antonyms list created successfully.\n");
-            printWords(antList, 1);
-            // Store the list for future use
+            
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "list_output.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printWords(global_ant_list, 1);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
         } else {
             custom_printf("Failed to create antonyms list.\n");
         }
-        fclose(f);
+    }
+    else if (strcmp(func->name, "getInfWord") == 0) {
+        if (!global_syn_list || !global_ant_list) {
+            custom_printf("Error: Synonym and antonym lists must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        
+        custom_printf("Getting information for word: %s\n", word);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "word_info.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
+            goto update_result;
+        }
+        
+        fw_getInfWord(global_syn_list, global_ant_list, word);
+        
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
+        }
+        
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
     }
     else if (strcmp(func->name, "sortWord") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Sorting words alphabetically.\n");
         
-        // In a real implementation, you'd retrieve the list from storage
-        // For demonstration, we'll create a simple list
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
+        global_syn_list = fw_sortWord(global_syn_list);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "sorted_list.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
             goto update_result;
         }
         
-        TList *list = getSynWords(f);
-        fclose(f);
+        fw_printWords(global_syn_list, 0);
         
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
-            goto update_result;
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
         }
         
-        list = sortWord(list);
-        custom_printf("Sorted list:\n");
-        printWords(list, 0);
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
     }
     else if (strcmp(func->name, "sortWord2") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Sorting words by character count.\n");
         
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
+        global_syn_list = fw_sortWord2(global_syn_list);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "sorted_list.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
             goto update_result;
         }
         
-        TList *list = getSynWords(f);
-        fclose(f);
+        fw_printWords(global_syn_list, 0);
         
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
-            goto update_result;
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
         }
         
-        list = sortWord2(list);
-        custom_printf("Sorted list by character count:\n");
-        printWords(list, 0);
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
     }
     else if (strcmp(func->name, "sortWord3") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Sorting words by vowel count.\n");
         
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
+        global_syn_list = fw_sortWord3(global_syn_list);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "sorted_list.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
             goto update_result;
         }
         
-        TList *list = getSynWords(f);
-        fclose(f);
+        fw_printWords(global_syn_list, 0);
         
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
+        }
+        
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
+    }
+    else if (strcmp(func->name, "deleteWord") == 0) {
+        if (!global_syn_list || !global_ant_list) {
+            custom_printf("Error: Synonym and antonym lists must be loaded first.\n");
             goto update_result;
         }
         
-        list = sortWord3(list);
-        custom_printf("Sorted list by vowel count:\n");
-        printWords(list, 0);
+        char word[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        
+        custom_printf("Deleting word: %s\n", word);
+        
+        fw_deleteWord("dictinoary.txt", global_syn_list, global_ant_list, word);
+        
+        custom_printf("Word deleted successfully.\n");
+    }
+    else if (strcmp(func->name, "updateWord") == 0) {
+        if (!global_syn_list || !global_ant_list) {
+            custom_printf("Error: Synonym and antonym lists must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256], synonym[256], antonym[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        GetWindowText(input_widgets[1], synonym, sizeof(synonym));
+        GetWindowText(input_widgets[2], antonym, sizeof(antonym));
+        
+        custom_printf("Updating word: %s with synonym: %s and antonym: %s\n", word, synonym, antonym);
+        
+        fw_updateWord("dictinoary.txt", global_syn_list, global_ant_list, word, synonym, antonym);
+        
+        custom_printf("Word updated successfully.\n");
+    }
+    else if (strcmp(func->name, "similarWord") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256], rate_str[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        GetWindowText(input_widgets[1], rate_str, sizeof(rate_str));
+        
+        int rate = atoi(rate_str);
+        
+        custom_printf("Finding words similar to '%s' with match rate %d%%\n", word, rate);
+        
+        TList *similar_list = fw_similarWord(global_syn_list, word, rate);
+        
+        if (similar_list) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "similar_words.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printWords(similar_list, 0);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("No similar words found.\n");
+        }
+    }
+    else if (strcmp(func->name, "countWord") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char substring[256];
+        GetWindowText(input_widgets[0], substring, sizeof(substring));
+        
+        custom_printf("Finding words containing substring: %s\n", substring);
+        
+        TList *count_list = fw_countWord(global_syn_list, substring);
+        
+        if (count_list) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "count_words.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printWords(count_list, 0);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("No matching words found.\n");
+        }
     }
     else if (strcmp(func->name, "palindromWord") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Finding palindrome words.\n");
         
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
-            goto update_result;
+        TList *palindromes = fw_palindromWord(global_syn_list);
+        
+        if (palindromes) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "palindromes.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printWords(palindromes, 0);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("No palindrome words found.\n");
         }
-        
-        TList *list = getSynWords(f);
-        fclose(f);
-        
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
-            goto update_result;
-        }
-        
-        TList *palindromes = palindromWord(list);
-        custom_printf("Palindrome words:\n");
-        printWords(palindromes, 0);
     }
     else if (strcmp(func->name, "syllable") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Grouping words by syllable count.\n");
         
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
-            goto update_result;
+        global_queue = fw_syllable(global_syn_list);
+        
+        if (global_queue) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "syllables.txt");
+            
+              tempFilename);
+            strcat(tempFilename, "syllables.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printQueueWords(global_queue);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("No words grouped by syllable count.\n");
         }
-        
-        TList *list = getSynWords(f);
-        fclose(f);
-        
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
-            goto update_result;
-        }
-        
-        TQueue *queue = syllable(list);
-        custom_printf("Words grouped by syllable count:\n");
-        printQueueWords(queue);
     }
     else if (strcmp(func->name, "prounounciation") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
+            goto update_result;
+        }
+        
         custom_printf("Grouping words by pronunciation.\n");
         
-        FILE *f = fopen("dictinoary.txt", "r");
-        if (!f) {
-            custom_printf("Error: Could not open dictionary file\n");
+        TQueue **queues = fw_prounounciation(global_syn_list);
+        
+        if (queues) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "pronunciation.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            custom_printf("Words with short vowels:\n");
+            fw_printQueueWords(queues[0]);
+            custom_printf("Words with long vowels:\n");
+            fw_printQueueWords(queues[1]);
+            custom_printf("Words with diphthongs:\n");
+            fw_printQueueWords(queues[2]);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("No words grouped by pronunciation.\n");
+        }
+    }
+    else if (strcmp(func->name, "stackToQueue") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
             goto update_result;
         }
         
-        TList *list = getSynWords(f);
-        fclose(f);
+        custom_printf("Converting stack to queue.\n");
         
-        if (!list) {
-            custom_printf("Error: Could not create list\n");
+        global_queue = fw_stackToQueue(global_stack);
+        
+        if (global_queue) {
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "queue.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printQueueWords(global_queue);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("Failed to convert stack to queue.\n");
+        }
+    }
+    else if (strcmp(func->name, "toStack") == 0) {
+        if (!global_syn_list) {
+            custom_printf("Error: Synonym list must be loaded first.\n");
             goto update_result;
         }
         
-        TQueue **queues = prounounciation(list);
-        custom_printf("Words with short vowels:\n");
-        printQueueWords(queues[0]);
-        custom_printf("Words with long vowels:\n");
-        printQueueWords(queues[1]);
-        custom_printf("Words with diphthongs:\n");
-        printQueueWords(queues[2]);
+        custom_printf("Converting list to stack.\n");
+        
+        global_stack = fw_toStack(global_syn_list);
+        
+        if (global_stack) {
+            custom_printf("Stack created successfully.\n");
+            
+            //* Create a temporary file for capturing stdout
+            char tempFilename[MAX_PATH];
+            GetTempPath(MAX_PATH, tempFilename);
+            strcat(tempFilename, "stack_output.txt");
+            
+            //* Redirect stdout to the temp file
+            FILE *temp_file = freopen(tempFilename, "w", stdout);
+            if (!temp_file) {
+                custom_printf("Error redirecting output.\n");
+                goto update_result;
+            }
+            
+            fw_printStackWords(global_stack);
+            
+            //* Close and reopen stdout
+            fclose(stdout);
+            FILE *console = freopen("CON", "w", stdout);
+            if (!console) {
+                custom_printf("Error restoring output.\n");
+            }
+            
+            //* Read from the temp file
+            FILE *read_temp = fopen(tempFilename, "r");
+            if (read_temp) {
+                char line[1024];
+                while (fgets(line, sizeof(line), read_temp)) {
+                    custom_printf("%s", line);
+                }
+                fclose(read_temp);
+            }
+            
+            //* Delete the temp file
+            remove(tempFilename);
+        } else {
+            custom_printf("Failed to create stack.\n");
+        }
+    }
+    else if (strcmp(func->name, "getInfWordStack") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        
+        custom_printf("Getting information for word: %s\n", word);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "word_info.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
+            goto update_result;
+        }
+        
+        fw_getInfWordStack(global_stack, word);
+        
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
+        }
+        
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
+    }
+    else if (strcmp(func->name, "sortWordStack") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
+            goto update_result;
+        }
+        
+        custom_printf("Sorting stack.\n");
+        
+        global_stack = fw_sortWordStack(global_stack);
+        
+        //* Create a temporary file for capturing stdout
+        char tempFilename[MAX_PATH];
+        GetTempPath(MAX_PATH, tempFilename);
+        strcat(tempFilename, "sorted_stack.txt");
+        
+        //* Redirect stdout to the temp file
+        FILE *temp_file = freopen(tempFilename, "w", stdout);
+        if (!temp_file) {
+            custom_printf("Error redirecting output.\n");
+            goto update_result;
+        }
+        
+        fw_printStackWords(global_stack);
+        
+        //* Close and reopen stdout
+        fclose(stdout);
+        FILE *console = freopen("CON", "w", stdout);
+        if (!console) {
+            custom_printf("Error restoring output.\n");
+        }
+        
+        //* Read from the temp file
+        FILE *read_temp = fopen(tempFilename, "r");
+        if (read_temp) {
+            char line[1024];
+            while (fgets(line, sizeof(line), read_temp)) {
+                custom_printf("%s", line);
+            }
+            fclose(read_temp);
+        }
+        
+        //* Delete the temp file
+        remove(tempFilename);
+    }
+    else if (strcmp(func->name, "deleteWordStack") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        
+        custom_printf("Deleting word from stack: %s\n", word);
+        
+        global_stack = fw_deleteWordStack(global_stack, word);
+        
+        custom_printf("Word deleted successfully.\n");
+    }
+    else if (strcmp(func->name, "updateWordStack") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256], synonym[256], antonym[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        GetWindowText(input_widgets[1], synonym, sizeof(synonym));
+        GetWindowText(input_widgets[2], antonym, sizeof(antonym));
+        
+        custom_printf("Updating word in stack: %s with synonym: %s and antonym: %s\n", word, synonym, antonym);
+        
+        global_stack = fw_updateWordStack(global_stack, word, synonym, antonym);
+        
+        custom_printf("Word updated successfully.\n");
+    }
+    else if (strcmp(func->name, "addWordStack") == 0) {
+        if (!global_stack) {
+            custom_printf("Error: Stack must be loaded first.\n");
+            goto update_result;
+        }
+        
+        char word[256], synonym[256], antonym[256];
+        GetWindowText(input_widgets[0], word, sizeof(word));
+        GetWindowText(input_widgets[1], synonym, sizeof(synonym));
+        GetWindowText(input_widgets[2], antonym, sizeof(antonym));
+        
+        custom_printf("Adding word to stack: %s with synonym: %s and antonym: %s\n", word, synonym, antonym);
+        
+        global_stack = fw_addWordStack(global_stack, word, synonym, antonym);
+        
+        custom_printf("Word added successfully.\n");
     }
     else {
         custom_printf("Function not implemented: %s\n", func->name);
