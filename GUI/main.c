@@ -1337,7 +1337,7 @@ void ExecuteFunction() {
             GetTempPath(MAX_PATH, tempFilename);
             strcat(tempFilename, "syllables.txt");
             
-              tempFilename);
+              tempFilename;
             strcat(tempFilename, "syllables.txt");
             
             //* Redirect stdout to the temp file
