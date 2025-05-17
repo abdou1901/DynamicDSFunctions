@@ -29,7 +29,7 @@ typedef enum {
 
 const char* category_names[NUM_CATEGORIES] = {
     "Trees",
-    "Code",
+    "Linked lists && Stacks && Queues",
     "Recursion"
 };
 
