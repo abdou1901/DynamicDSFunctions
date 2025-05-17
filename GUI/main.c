@@ -104,6 +104,89 @@ FunctionInfo functions[] = {
     {"isBalencedBST", "Check if the tree is balanced", CATEGORY_TREES, 1, 
      (const char*[]){"Tree"}, 
      (const char*[]){"tree"}},
+
+    // Linked Lists functions
+    {"getSynWords", "Get synonyms from file", CATEGORY_CODE, 1, 
+     (const char*[]){"Filename"}, 
+     (const char*[]){"string"}},
+    
+    {"getAntoWords", "Get antonyms from file", CATEGORY_CODE, 1, 
+     (const char*[]){"Filename"}, 
+     (const char*[]){"string"}},
+    
+    {"getInfWord", "Get information about a word", CATEGORY_CODE, 3, 
+     (const char*[]){"Synonyms List", "Antonyms List", "Word"}, 
+     (const char*[]){"list", "list", "string"}},
+    
+    {"sortWord", "Sort words alphabetically", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"sortWord2", "Sort words by character count", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"sortWord3", "Sort words by vowel count", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"deleteWord", "Delete a word", CATEGORY_CODE, 4, 
+     (const char*[]){"File", "Synonyms List", "Antonyms List", "Word"}, 
+     (const char*[]){"file", "list", "list", "string"}},
+    
+    {"updateWord", "Update a word", CATEGORY_CODE, 6, 
+     (const char*[]){"File", "Synonyms List", "Antonyms List", "Word", "Synonym", "Antonym"}, 
+     (const char*[]){"file", "list", "list", "string", "string", "string"}},
+    
+    {"similarWord", "Find similar words", CATEGORY_CODE, 3, 
+     (const char*[]){"List", "Word", "Match Rate"}, 
+     (const char*[]){"list", "string", "int"}},
+    
+    {"countWord", "Count words containing substring", CATEGORY_CODE, 2, 
+     (const char*[]){"List", "Substring"}, 
+     (const char*[]){"list", "string"}},
+    
+    {"palindromWord", "Find palindrome words", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    // Stack functions
+    {"toStack", "Convert list to stack", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"getInfWordStack", "Get word info from stack", CATEGORY_CODE, 2, 
+     (const char*[]){"Stack", "Word"}, 
+     (const char*[]){"stack", "string"}},
+    
+    {"sortWordStack", "Sort stack", CATEGORY_CODE, 1, 
+     (const char*[]){"Stack"}, 
+     (const char*[]){"stack"}},
+    
+    {"deleteWordStack", "Delete word from stack", CATEGORY_CODE, 2, 
+     (const char*[]){"Stack", "Word"}, 
+     (const char*[]){"stack", "string"}},
+    
+    {"updateWordStack", "Update word in stack", CATEGORY_CODE, 4, 
+     (const char*[]){"Stack", "Word", "Synonym", "Antonym"}, 
+     (const char*[]){"stack", "string", "string", "string"}},
+    
+    {"addWordStack", "Add word to stack", CATEGORY_CODE, 4, 
+     (const char*[]){"Stack", "Word", "Synonym", "Antonym"}, 
+     (const char*[]){"stack", "string", "string", "string"}},
+    
+    // Queue functions
+    {"syllable", "Group words by syllable count", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"prounounciation", "Group words by pronunciation", CATEGORY_CODE, 1, 
+     (const char*[]){"List"}, 
+     (const char*[]){"list"}},
+    
+    {"stackToQueue", "Convert stack to queue", CATEGORY_CODE, 1, 
+     (const char*[]){"Stack"}, 
+     (const char*[]){"stack"}},
     
     {"wordPermutation", "Generate all permutations of a word", CATEGORY_RECURSION, 1, 
      (const char*[]){"Word"}, 
@@ -773,6 +856,183 @@ void ExecuteFunction() {
         } else {
             custom_printf("The word is not a palindrome.\n");
         }
+    }
+    else if (strcmp(func->name, "getSynWords") == 0) {
+        char filename[256];
+        GetWindowText(input_widgets[0], filename, sizeof(filename));
+        
+        custom_printf("Getting synonyms from file: %s\n", filename);
+        
+        FILE *f = fopen(filename, "r");
+        if (!f) {
+            custom_printf("Error: Could not open file %s\n", filename);
+            goto update_result;
+        }
+        
+        TList *synList = getSynWords(f);
+        if (synList) {
+            custom_printf("Synonyms list created successfully.\n");
+            printWords(synList, 0);
+            // Store the list for future use
+            // Note: In a real application, you'd need to manage this memory
+        } else {
+            custom_printf("Failed to create synonyms list.\n");
+        }
+        fclose(f);
+    }
+    else if (strcmp(func->name, "getAntoWords") == 0) {
+        char filename[256];
+        GetWindowText(input_widgets[0], filename, sizeof(filename));
+        
+        custom_printf("Getting antonyms from file: %s\n", filename);
+        
+        FILE *f = fopen(filename, "r");
+        if (!f) {
+            custom_printf("Error: Could not open file %s\n", filename);
+            goto update_result;
+        }
+        
+        TList *antList = getAntoWords(f);
+        if (antList) {
+            custom_printf("Antonyms list created successfully.\n");
+            printWords(antList, 1);
+            // Store the list for future use
+        } else {
+            custom_printf("Failed to create antonyms list.\n");
+        }
+        fclose(f);
+    }
+    else if (strcmp(func->name, "sortWord") == 0) {
+        custom_printf("Sorting words alphabetically.\n");
+        
+        // In a real implementation, you'd retrieve the list from storage
+        // For demonstration, we'll create a simple list
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        list = sortWord(list);
+        custom_printf("Sorted list:\n");
+        printWords(list, 0);
+    }
+    else if (strcmp(func->name, "sortWord2") == 0) {
+        custom_printf("Sorting words by character count.\n");
+        
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        list = sortWord2(list);
+        custom_printf("Sorted list by character count:\n");
+        printWords(list, 0);
+    }
+    else if (strcmp(func->name, "sortWord3") == 0) {
+        custom_printf("Sorting words by vowel count.\n");
+        
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        list = sortWord3(list);
+        custom_printf("Sorted list by vowel count:\n");
+        printWords(list, 0);
+    }
+    else if (strcmp(func->name, "palindromWord") == 0) {
+        custom_printf("Finding palindrome words.\n");
+        
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        TList *palindromes = palindromWord(list);
+        custom_printf("Palindrome words:\n");
+        printWords(palindromes, 0);
+    }
+    else if (strcmp(func->name, "syllable") == 0) {
+        custom_printf("Grouping words by syllable count.\n");
+        
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        TQueue *queue = syllable(list);
+        custom_printf("Words grouped by syllable count:\n");
+        printQueueWords(queue);
+    }
+    else if (strcmp(func->name, "prounounciation") == 0) {
+        custom_printf("Grouping words by pronunciation.\n");
+        
+        FILE *f = fopen("dictinoary.txt", "r");
+        if (!f) {
+            custom_printf("Error: Could not open dictionary file\n");
+            goto update_result;
+        }
+        
+        TList *list = getSynWords(f);
+        fclose(f);
+        
+        if (!list) {
+            custom_printf("Error: Could not create list\n");
+            goto update_result;
+        }
+        
+        TQueue **queues = prounounciation(list);
+        custom_printf("Words with short vowels:\n");
+        printQueueWords(queues[0]);
+        custom_printf("Words with long vowels:\n");
+        printQueueWords(queues[1]);
+        custom_printf("Words with diphthongs:\n");
+        printQueueWords(queues[2]);
     }
     else {
         custom_printf("Function not implemented: %s\n", func->name);
