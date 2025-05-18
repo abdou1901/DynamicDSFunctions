@@ -24,7 +24,7 @@ void insertAtBeginning(Node** head,Node **tail, int id, char* timestamp, char* L
 
 void insertAtEnd(Node** head,Node **tail,int id, char* timestamp, char* LOG, char* message);
 
-void insertAtPosition(Node** head, int id, char* timestamp, char* LOG, char* message, int position);
+void insertAtPosition(Node** head,Node **tail, int id, char* timestamp, char* LOG, char* message, int position);
 
 void deleteByID(Node** head, Node** tail, int id);
 

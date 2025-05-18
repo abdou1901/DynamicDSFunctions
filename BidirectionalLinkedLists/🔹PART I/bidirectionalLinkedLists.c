@@ -47,13 +47,12 @@ void insertAtEnd(Node** head, Node ** tail,int id, char* timestamp, char* LOG, c
 }
 
 
-int Length(Node *head,Node *tail){
-   int counter=0;
-   
-    while (head!=tail->next)
-    {
+int Length(Node *head, Node *tail) {
+    int counter = 0;
+    while (head != NULL) {
         counter++;
-        head=head->next;
+        if (head == tail) break;
+        head = head->next;
     }
     return counter;
 }
@@ -97,78 +96,75 @@ void insertAtPosition(Node** head,Node** tail, int id, char* timestamp, char* LO
 }
 
 void deleteByID(Node** head, Node** tail, int id){
+    if (*head == NULL) return;
 
-    if (*head==NULL) printf("NO LIST!");
-    if (*head ==*tail)
-    {
-        head=NULL;tail=head;
-        return;
+    Node* current = *head;
+    while (current != NULL && current->id != id) {
+        current = current->next;
     }
-    
-    if ((*head)->id==id)
-    {
-        *head=(*head)->next;
-        (*head)->prev=NULL;
-    }
-    if ((*tail)->id==id)
-    {
-        *tail=(*tail)->prev;
-        (*tail)->next=NULL;
-    }
-    Node *temph=*head;
-    while (temph->id!=id)
-    {
-        temph=temph->next;
-    }
-    Node *temp;
-    temp=temph->next->prev;
-    temph->next->prev=temph->prev->next;
-    temph->prev->next=temp;
+    if (!current) return;
 
-    
-
-
+    if (current == *head && current == *tail) {
+        *head = *tail = NULL;
+    } else if (current == *head) {
+        *head = current->next;
+        if (*head) (*head)->prev = NULL;
+    } else if (current == *tail) {
+        *tail = current->prev;
+        if (*tail) (*tail)->next = NULL;
+    } else {
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
+    }
+    free(current);
 }
-
 void deleteByTimestamp(Node** head, Node** tail, char* timestamp){
-    if (*head==NULL) printf("NO LIST!");
-    if (*head ==*tail)
-    {
-        head=NULL;tail=head;
-        return;
+    if (*head == NULL) return;
+
+    Node* current = *head;
+    while (current != NULL && strcmp(current->timestamp, timestamp) != 0) {
+        current = current->next;
     }
-    
-    if ((*head)->timestamp==timestamp)
-    {
-        *head=(*head)->next;
-        (*head)->prev=NULL;
-        return;
+    if (!current) return;
+
+    if (current == *head && current == *tail) {
+        *head = *tail = NULL;
+    } else if (current == *head) {
+        *head = current->next;
+        if (*head) (*head)->prev = NULL;
+    } else if (current == *tail) {
+        *tail = current->prev;
+        if (*tail) (*tail)->next = NULL;
+    } else {
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
     }
-    if ((*tail)->timestamp==timestamp)
-    {
-        *tail=(*tail)->prev;
-        (*tail)->next=NULL;
-        return;
-    }
-    Node *temph=*head;
-    while (temph->timestamp!=timestamp)
-    {
-        temph=temph->next;
-    }
-    Node *temp;
-    temp=temph->next->prev;
-    temph->next->prev=temph->prev->next;
-    temph->prev->next=temp;
+    free(current);
 }
 
 void deleteFirst(Node** head, Node** tail){
-    *head=(*head)->next;
-    (*head)->prev=NULL;
-}
+    if (*head == NULL) return;
 
+    Node* temp = *head;
+    if (*head == *tail) {
+        *head = *tail = NULL;
+    } else {
+        *head = temp->next;
+        (*head)->prev = NULL;
+    }
+    free(temp);
+}
 void deleteLast(Node** head, Node** tail){
-    *tail=(*tail)->prev;
-    (*tail)->next=NULL;
+    if (*tail == NULL) return;
+
+    Node* temp = *tail;
+    if (*head == *tail) {
+        *head = *tail = NULL;
+    } else {
+        *tail = temp->prev;
+        (*tail)->next = NULL;
+    }
+    free(temp);
 }
 
 Node* searchByID(Node* head, int id){
@@ -184,7 +180,7 @@ Node* searchByID(Node* head, int id){
 
 Node* searchByKeyword(Node* head, char* keyword){
     //*for now  will make it linear search it may update to binary search when i creat sorting procedure
-    while (head->LOG!=keyword)
+    while (head && strcmp(head->LOG,keyword)!=0)
     {
         head=head->next;
     }
@@ -193,7 +189,7 @@ Node* searchByKeyword(Node* head, char* keyword){
 
 Node* searchByTimestamp(Node* head, char* timestamp){
     //*for now  will make it linear search it may update to binary search when i creat sorting procedure
-    while (head->timestamp!=timestamp)
+    while (head && strcmp(head->timestamp,timestamp)!=0)
     {
         head=head->next;
     }
@@ -208,21 +204,22 @@ void sortBySeverity(Node** head){
     *head =mergeSortBySeverity(*head);
 }
 
-void reverseList(Node** head, Node** tail){
-    Node *current=*head;
-    while (current!=NULL)
-    {
-        Node *temp;
-        temp =current->next->prev;
-        current->next->prev=current->prev->next;
-        current->prev->next=temp;
-        current=current->prev;
+void reverseList(Node** head, Node** tail) {
+    Node* current = *head;
+    Node* temp = NULL;
+
+    while (current != NULL) {
+        temp = current->prev;
+        current->prev = current->next;
+        current->next = temp;
+        current = current->prev;
     }
-    Node *temp;
-    temp=*head;
-    *head=*tail;
-    *tail=temp;
-    
+
+    if (temp != NULL) {
+        temp = temp->prev;
+        *tail = *head;
+        *head = temp;
+    }
 }
 
 int countLogs(Node* head){
@@ -255,54 +252,47 @@ void traverseBackward(Node* tail){
 }
 
 void deleteAtIndex(Node** head, Node** tail, int index){
-    if (*head==NULL) printf("NO LIST!");
-    if (*head ==*tail)
-    {
-        head=NULL;tail=head;
-        return;
-    }
-    
-    if (!index)
-    {
-        *head=(*head)->next;
-        (*head)->prev=NULL;
-        return;
-    }
-    int count=countLogs(*head);
-    if (index==count)
-    {
-        *tail=(*tail)->prev;
-        (*tail)->next=NULL;
-        return;
-    }
-    Node *temph=*head;
-    for(int i=0;i<index;i++)
-    {
-        temph=temph->next;
-    }
-    Node *temp;
-    temp=temph->next->prev;
-    temph->next->prev=temph->prev->next;
-    temph->prev->next=temp;
+    if (*head == NULL) return;
 
+    int count = countLogs(*head);
+    if (index < 0 || index >= count) return;
+
+    Node* current = *head;
+    for (int i = 0; i < index; i++) {
+        current = current->next;
+    }
+
+    if (current == *head && current == *tail) {
+        *head = *tail = NULL;
+    } else if (current == *head) {
+        *head = current->next;
+        if (*head) (*head)->prev = NULL;
+    } else if (current == *tail) {
+        *tail = current->prev;
+        if (*tail) (*tail)->next = NULL;
+    } else {
+        current->prev->next = current->next;
+        current->next->prev = current->prev;
+    }
+    free(current);
 }
 
-Node* mergeLogLists(Node* list1, Node* list2){
-   
-   if (list1==NULL && list2 == NULL) return NULL;
-   
-   
-   
-    Node *head;
-    head=list1;
-    while (list1->next!=NULL)
-    {
-       list1=list1->next;
+
+Node* mergeLogLists(Node* list1, Node* list2) {
+    if (!list1) return list2;
+    if (!list2) return list1;
+
+    Node* head = list1;
+    while (list1->next != NULL) {
+        list1 = list1->next;
     }
-    list1->next=list2;
-    list2->prev=list1;
+    list1->next = list2;
+    list2->prev = list1;
+
     return head;
 }
+
+
 
 Node* findMiddle(Node* head) {
     if (head==NULL) return NULL;
