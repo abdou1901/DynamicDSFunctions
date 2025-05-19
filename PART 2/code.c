@@ -2,7 +2,7 @@
 //some useful functions -----------------------------------------------------
 void printCentered(char *str, int width){
     int len = strlen(str);
-    if (len > width - 2) len = width - 2;
+    if(len > width - 2) len = width - 2;
     int padding = (width - 2 - len) / 2;
     int extra = (width - 2 - len) % 2;
     printf("+");
@@ -15,7 +15,7 @@ void printCentered(char *str, int width){
 }
 bool includes(char *str, char c, int size){
     for (int i = 0; i < size; i++) {
-        if (str[i] == c) return true;
+        if(str[i] == c) return true;
     }
     return false;
 }
@@ -84,10 +84,10 @@ int matchRate(char *word1, char *word2) {
     int len2 = strlen(word2);
     int common = 0;
     for (int i = 0; i < len2; i++){
-        if (word1[i] == word2[i]) common++;
+        if(word1[i] == word2[i]) common++;
         else break;
     }
-    if (common == len2) return 100;
+    if(common == len2) return 100;
     return (common * 100) / len2;
 }
 bool isPalindrome(char *s,int l,int r){ return (l >= r)?1:(s[l]==s[r] && isPalindrome(s,l+1,r-1)); }
@@ -105,7 +105,7 @@ void printWords2(TList2 *list){ // prints words of the biderctional linked list 
     }
 }
 void printWords3(TList3 *list) { // print words of the circular linked list from the merge2 function
-    if (list->head == NULL) {
+    if(list->head == NULL) {
         printf("Empty List!\n");
         return;
     } 
@@ -128,7 +128,7 @@ int count_syllables(const char *word){
     for (int i = 0; i < length; i++){
         char c = tolower(word[i]);
 
-        if (is_vowel(c)){
+        if(is_vowel(c)){
             if(!prev_char_was_vowel){
                 count++;
                 prev_char_was_vowel = 1;
@@ -160,7 +160,7 @@ void printQueueWords(TQueue *queue){
 }
 enum VowelType getVowelType(const char *word) {
     const char *diphthongs[] = {"ai", "au", "ei", "oi", "ou", "ow", "oy"};
-    for(int i = 0; i < sizeof(diphthongs)/sizeof(diphthongs[0]); i++)if (strstr(word, diphthongs[i])) return DIPHTHONG;
+    for(int i = 0; i < sizeof(diphthongs)/sizeof(diphthongs[0]); i++)if(strstr(word, diphthongs[i])) return DIPHTHONG;
     int len = strlen(word);
     if(len >= 2 && word[len-1]== 'e') return LONG;
     return SHORT;
@@ -206,6 +206,12 @@ void insertSorted(TStack *stk , cnode *newnode){ // used to insert a node in the
     }
     cnode *temp = popFromStack(stk);
     insertSorted(stk,newnode);
+    pushToStack(stk,temp);
+}
+void StackInsertAtEnd(TStack *stk , cnode *newNode){
+    if(isStackEmpty(stk)) {pushToStack(stk,newNode);return;}
+    cnode *temp  = popFromStack(stk);
+    StackInsertAtEnd(stk,newNode);
     pushToStack(stk,temp);
 }
 void enqueue(TQueue *queue,char *word){
@@ -256,7 +262,7 @@ cnode *copyNode(cnode *src){
 
 TList *getSynWords(FILE *f){
     f = fopen("words.txt","r");
-    if (!f) {
+    if(!f) {
         perror("Failed to open file");
         return NULL;
     }
@@ -266,7 +272,7 @@ TList *getSynWords(FILE *f){
     char word[50];
     char syn[50];
     while(fgets(buffer, sizeof(buffer), f)!=NULL){
-        if (sscanf(buffer, "%49[^=] = %49[^#]", word, syn) == 2) {
+        if(sscanf(buffer, "%49[^=] = %49[^#]", word, syn) == 2) {
             addNodeAtEnd(list,word,syn);
         }
     }
@@ -275,7 +281,7 @@ TList *getSynWords(FILE *f){
 }
 TList *getAntoWords(FILE *f){
     f = fopen("words.txt","r");
-    if (!f) {
+    if(!f) {
         perror("Failed to open file");
         return NULL;
     }
@@ -729,7 +735,7 @@ TStack *deleteWordStack(TStack *stk, char *word){
         cnode *temp = popFromStack(stk);
         free(temp);
         temp = NULL;
-        // return stk; // if we want to delete only first occurence
+        // return stk; // ifwe want to delete only first occurence
     }
     cnode *temp2 = popFromStack(stk);
     deleteWordStack(stk,word);
@@ -742,7 +748,7 @@ TStack *updateWordStack(TStack *stk, char *word, char *syne, char *anton){
         cnode *temp = peakStack(stk);
         strcpy(temp->antonym , anton);
         strcpy(temp->synonym,syne);
-        // return stk; // if we want to delete only first occurence
+        // return stk; // ifwe want to delete only first occurence
     }
     cnode *temp = popFromStack(stk);
     updateWordStack(stk,word,syne,anton);
@@ -792,7 +798,7 @@ char pop(Tstack2 *stk){
     return c;
 }
 int lengthStack(TStack *stk){
-    if (isStackEmpty(stk)) return 0;
+    if(isStackEmpty(stk)) return 0;
     cnode *temp = popFromStack(stk);
     int count = 1+ lengthStack(stk);
     pushToStack(stk,temp);
@@ -860,7 +866,7 @@ void smallestword(TStack *stk,cnode **minnode){
     pushToStack(stk,temp);
 }
 char *getSmallest(TStack *stk) {
-    if (isStackEmpty(stk)) {
+    if(isStackEmpty(stk)) {
         return NULL;
     }
     cnode *minnode = NULL;
@@ -885,11 +891,116 @@ bool isPalyndromeStack(char *word){
     free(stk);
     return true;
 }
+
+static cnode **stack_to_array(TStack *stk, int *out_n) {
+    int  cap = 16, n = 0;
+    cnode **arr = malloc(cap * sizeof(cnode *));
+    cnode  *tmp;
+    while (!isStackEmpty(stk)){
+        tmp = popFromStack(stk);
+        if(n == cap){
+            cap *= 2;
+            arr = realloc(arr, cap * sizeof(cnode *));
+        }
+        arr[n++] = tmp;
+    }
+    //restore 
+    for (int i = n - 1; i >= 0; --i) {
+        pushToStack(stk, arr[i]);
+    }
+    *out_n = n;
+    return arr;
+}
+
+static int find_idx(cnode **arr, int n, const char *w) {
+    for (int i = 0; i < n; ++i) {
+        if(strcmp(arr[i]->word, w) == 0)
+            return i;
+    }
+    return -1;
+}
+
+//Recursively walk looking for a cycle back to 'start'
+static void dfs_cycle(cnode **arr, int n,int start, int cur,bool *inPath, char **path, int depth){
+    //try synonym
+    if(arr[cur]->synonym[0]) {
+        int ni = find_idx(arr, n, arr[cur]->synonym);
+        if(ni >= 0) {
+            //ifwe find again the starting point
+            if(ni == start) {
+                //print cycle: path[0..depth-1] -> synonym -> start 
+                for (int i = 1; i < depth; ++i) {
+                    printf("%s -> ", path[i]);
+                }
+                printf("%s -> %s\n",arr[cur]->word,arr[start]->word);
+            }
+            else if(!inPath[ni]) {
+                inPath[ni] = true;
+                path[depth] = arr[cur]->word;
+                dfs_cycle(arr, n, start, ni, inPath, path, depth+1);
+                inPath[ni] = false;
+            }
+        }
+    }
+    //try antonym
+    if(arr[cur]->antonym[0]) {
+        int ni = find_idx(arr, n, arr[cur]->antonym);
+        if(ni >= 0) {
+            if(ni == start) {
+                for (int i = 0; i < depth; ++i) {
+                    printf("%s -> ", path[i]);
+                }
+                printf("%s -> %s\n",
+                       arr[cur]->word,
+                       arr[start]->word);
+            }
+            else if(!inPath[ni]) {
+                inPath[ni] = true;
+                path[depth] = arr[cur]->word;
+                dfs_cycle(arr, n, start, ni, inPath, path, depth+1);
+                inPath[ni] = false;
+            }
+        }
+    }
+}
+void cycleSearch(TStack *stk) {
+    if(!stk || isStackEmpty(stk)) {
+        printf("No words to search.\n");
+        return;
+    }
+
+    //convert stack to array
+    int      n;
+    cnode  **nodes = stack_to_array(stk, &n);
+
+    bool  *inPath = calloc(n,sizeof(bool));
+    char **path   = malloc(n*sizeof(char*));
+    for (int i = 0; i < n; ++i) {
+        path[i] = malloc(50);  //storing the sequence of words
+    }
+
+    //make dfs for each word
+    for (int i = 0; i < n; ++i) {
+        inPath[i] = true;
+        path[0]   = nodes[i]->word;
+        dfs_cycle(nodes, n, i, i, inPath, path, 1);
+        inPath[i] = false;
+    }
+    for (int i = 0; i < n; ++i){
+        free(path[i]);
+    }
+    free(path);
+    free(inPath);
+    free(nodes);
+}
+
 TStack *StackRev(TStack *stk){
     if(isStackEmpty(stk)) return stk;
     cnode *temp = popFromStack(stk);
     stk = StackRev(stk);
-    pushToStack(stk,temp);
+    StackInsertAtEnd(stk,temp);
     return stk;
 }
+
+
 //--------------------------------------------------------------------------------------

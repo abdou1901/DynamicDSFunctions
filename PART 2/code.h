@@ -153,6 +153,6 @@ void addNodesToArray(cnode **arr, int index, TStack *stk);
 int compareNodes2(const void *a, const void *b);
 char *getSmallest(TStack *stk);
 void smallestword(TStack *stk, cnode **minnode);
-
+void cycleSearch(TStack *Stk);
 void insertWordInverse(char *word, int index, Tstack2 *stk);
 #endif // WORD_LIBRARY_H
