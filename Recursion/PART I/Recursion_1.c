@@ -10,13 +10,16 @@
 typedef enum { INFO = 0, WARNING = 1, ERROR = 2, CRITICAL = 3 } Severity;
 
 void reverseListRecursive(Node** head, Node** tail, Node* current) {
-    if (*head == NULL || *head == *tail) return;  
+    if (current == NULL) return;
+
     
     Node* temp = current->next;
     current->next = current->prev;
     current->prev = temp;
 
-    if (temp == *head) {
+    
+    if (temp == NULL) {
+        
         *tail = *head;
         *head = current;
         return;
@@ -24,7 +27,6 @@ void reverseListRecursive(Node** head, Node** tail, Node* current) {
 
     reverseListRecursive(head, tail, temp);
 }
-
 int factorial(int n) {
     if (n == 0 || n == 1) return 1;
     return n * factorial(n - 1);

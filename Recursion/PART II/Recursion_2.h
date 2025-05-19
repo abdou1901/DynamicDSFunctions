@@ -40,20 +40,5 @@ int distinctSubseqWord(char *word);
 bool isPalindromWord(char *word);
 
 
-typedef struct {
-    char **lines;
-    int top;
-    int capacity;
-} Stack;
-
-Stack *createStack(int capacity);
-
-void push(Stack *stack, const char *line);
-
-char *pop(Stack *stack);
-
-void reverseFile(const char *inputFilename, const char *outputFilename);
-
-void replaceFile(const char *original, const char *temp);
 
 #endif // RECURSION_PART2_H

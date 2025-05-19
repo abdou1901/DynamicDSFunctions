@@ -1,8 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include"🔹PART I/Recursion_1.h"
-#include "🔸PART II/Recursion_2.h"
+#include"PART I/Recursion_1.h"
+#include "PART II/Recursion_2.h"
 
 int main() {
     //! PART ONE TESTS
@@ -16,7 +16,7 @@ int main() {
     n1->next = n2; n2->prev = n1;
     head = n1; tail = n2;
 
-    printf("Original List:\n");
+   printf("Original List:\n");
     printf("ID: %d, Message: %s\n", head->id, head->message);
     printf("ID: %d, Message: %s\n", head->next->id, head->next->message);
 
@@ -25,7 +25,7 @@ int main() {
     printf("\nReversed List:\n");
     printf("ID: %d, Message: %s\n", head->id, head->message);
     printf("ID: %d, Message: %s\n", head->next->id, head->next->message);
-
+/*
     //*math functions
     printf("\nFactorial of 5: %d\n", factorial(5));
     printf("Fibonacci of 6: %d\n", fibonacci(6));
@@ -40,7 +40,7 @@ int main() {
         {20, "", "", "Log20", NULL, NULL}
     };
     printf("\nBinary Search for ID 10: Index = %d\n", binarySearchLogs(logs, 0, 2, 10));
-
+*/
     //*infixToPostfixRecursive
     char infix[] = "A+B*C";
     char postfix[100];
@@ -48,7 +48,7 @@ int main() {
     infixToPostfixRecursive(infix, 0, postfix, &postIndex);
     postfix[postIndex] = '\0';
     printf("\nPostfix Expression: %s\n", postfix);
-
+/*
     //! PART TWO TESTS
     FILE *f = fopen("test.txt", "w+");
     if (f) {
@@ -112,6 +112,6 @@ int main() {
 
     free(n1);
     free(n2);
-
+*/
     return 0;
 }

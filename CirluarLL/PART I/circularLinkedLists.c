@@ -107,7 +107,7 @@ void insertLog(Node** head, Node** tail, int id, char* timestamp, char* LOG, cha
         return;
     }
     
-    if (currentSize<=maxSize) insertAtEnd(head,tail,id,timestamp,LOG,message);
+    if (*currentSize<=maxSize) insertAtEnd(head,tail,id,timestamp,LOG,message);
     else{
         (*head)->id=id;
         strcpy((*head)->timestamp,timestamp);

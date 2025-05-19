@@ -6,27 +6,32 @@
 
 #define MAX 500
 
+Node* mergeSortedLists(Node* first, Node* second);
+Node* mergeSort(Node* head);
+Node* mergeSortedByTimestamp(Node* first, Node* second);
+Node* mergeSortByTimestamp(Node* head);
+Node* mergeSortedBySeverity(Node* first, Node* second);
+Node* mergeSortBySeverity(Node* head);
+
 //*don't worry i will add comments
 Node  *allocate(){
     return (Node*)malloc(sizeof(Node));
 }
 
 void insertAtBeginning(Node** head,Node **tail, int id, char* timestamp, char* LOG, char* message){
-    
     Node *node;
-    node =allocate();
+    node = allocate();
     
     node->prev=NULL;
     node->next=*head;
     node->id=id;
+    strcpy(node->timestamp, timestamp);
     strcpy(node->LOG,LOG);
     strcpy(node->message,message);
 
     if (*head != NULL) (*head)->prev = node;
     else  *tail = node; 
     *head = node;
-
-
 }
 
 void insertAtEnd(Node** head, Node ** tail,int id, char* timestamp, char* LOG, char* message){
@@ -36,14 +41,13 @@ void insertAtEnd(Node** head, Node ** tail,int id, char* timestamp, char* LOG, c
     node->prev=*tail;
     node->next=NULL;
     node->id=id;
+    strcpy(node->timestamp, timestamp);
     strcpy(node->LOG,LOG);
     strcpy(node->message,message);
 
     if (*tail != NULL) (*tail)->next = node;
     else  *head = node; 
     *tail = node;
-
-    
 }
 
 
@@ -78,23 +82,17 @@ void insertAtPosition(Node** head,Node** tail, int id, char* timestamp, char* LO
         tempt=temph->next;
     }
     
-    Node *temp;
-
     Node *node;
     node =allocate();
     node->prev=temph;
     node->next=tempt;
     node->id=id;
+    strcpy(node->timestamp, timestamp);
     strcpy(node->LOG,LOG);
     strcpy(node->message,message);
     temph->next=node;
     tempt->prev=node;
-    
-    
-
-    
 }
-
 void deleteByID(Node** head, Node** tail, int id){
     if (*head == NULL) return;
 
@@ -196,12 +194,12 @@ Node* searchByTimestamp(Node* head, char* timestamp){
     return head;
 }
 
-void sortByDate(Node** head){
-    *head=mergeSortByTimestamp(*head);
+void sortByDate(Node** head) {
+    *head = mergeSortByTimestamp(*head);
 }
 
-void sortBySeverity(Node** head){
-    *head =mergeSortBySeverity(*head);
+void sortBySeverity(Node** head) {
+    *head = mergeSortBySeverity(*head);
 }
 
 void reverseList(Node** head, Node** tail) {
@@ -326,17 +324,15 @@ Node* mergeSortedLists(Node* first, Node* second) {
 }
 
 Node* mergeSort(Node* head) {
-    if (head==NULL || !head->next==NULL) return head; 
+    if (head == NULL || head->next == NULL) return head;  // Fixed comparison
 
     Node* middle = findMiddle(head);
     Node* secondHalf = middle->next;
-    middle->next = NULL; 
-    if (secondHalf!=NULL) secondHalf->prev = NULL;
+    middle->next = NULL;
+    if (secondHalf != NULL) secondHalf->prev = NULL;
 
-    
     Node* left = mergeSort(head);
     Node* right = mergeSort(secondHalf);
-
 
     return mergeSortedLists(left, right);
 }
@@ -371,7 +367,7 @@ Node* mergeSortByTimestamp(Node* head) {
 Node* mergeSortedBySeverity(Node* first, Node* second) {
     if (!first) return second;
     if (!second) return first;
-    if (first->LOG <= second->LOG) {
+    if (strcmp(first->LOG, second->LOG) <= 0) {
         first->next = mergeSortedBySeverity(first->next, second);
         if (first->next) first->next->prev = first;
         first->prev = NULL;
@@ -394,5 +390,3 @@ Node* mergeSortBySeverity(Node* head) {
     Node* right = mergeSortBySeverity(secondHalf);
     return mergeSortedBySeverity(left, right);
 }
-
-

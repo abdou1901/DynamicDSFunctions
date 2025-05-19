@@ -4,7 +4,7 @@
 #include <stdbool.h>
 #include <math.h>
 #include "Recursion_2.h"
-#include "../🔹PART I/Recursion_1.h" 
+#include "../PART I/Recursion_1.h" 
 
 FILE *openFile(const char *filename, const char *mode) {
     FILE *f = fopen(filename, mode);
